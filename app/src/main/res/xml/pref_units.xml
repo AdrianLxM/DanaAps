@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:key="ns_units"
+        android:title="@string/ns_units">
+
+        <ListPreference
+            android:key="ns_units"
+            android:title="Units"
+            android:entries="@array/Units"
+            android:entryValues="@array/Units"/>
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

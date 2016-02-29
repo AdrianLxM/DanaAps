@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:key="ns_sync"
+        android:title="@string/ns_sync_title">
+
+            <ListPreference
+                android:title="@string/ns_sync_profile_title"
+                android:key="ns_sync_profile"
+                android:defaultValue="None"
+                android:entries="@array/ns_sync_profile_values"
+                android:entryValues="@array/ns_sync_profile_values" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

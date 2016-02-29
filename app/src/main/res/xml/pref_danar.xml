@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:key="danar"
+        android:title="Pump settings">
+
+        <info.nightscout.danar.BluetoothDevicePreference
+            android:key="danar_bt_name"
+            android:title="DanaR Bluetooth Device"
+            android:dialogTitle="Choose Bluetooth Device" />
+    </PreferenceCategory>
+
+
+</PreferenceScreen>

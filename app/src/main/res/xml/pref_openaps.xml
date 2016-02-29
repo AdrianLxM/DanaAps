@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:title="Acceptable BG range"
+        android:key="bgRange">
+        <EditTextPreference
+            android:key="max_bg"
+            android:title="High Value"
+            android:numeric="decimal"
+            android:summary="The maximum value you consider to be in range."
+            android:defaultValue="" />
+        <EditTextPreference
+            android:key="min_bg"
+            android:title="Low Value"
+            android:numeric="decimal"
+            android:summary="The minimum value you consider to be in range."
+            android:defaultValue="" />
+        <EditTextPreference
+            android:defaultValue=""
+            android:key="target_bg"
+            android:numeric="decimal"
+            android:summary="Your target Blood Sugar"
+            android:title="Target BG" />
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:key="aps_limits"
+        android:title="Limits">
+
+        <EditTextPreference
+            android:title="Max Basal"
+            android:defaultValue="1"
+            android:key="max_basal"
+            android:numeric="decimal"
+            android:summary="Max U/hr a Temp Basal can be set to" />
+        <EditTextPreference
+            android:title="Max Basal IOB"
+            android:defaultValue="1.5"
+            android:key="max_iob"
+            android:numeric="decimal"
+            android:summary="Maximum amount of non-bolus IOB OpenAPS can deliver"/>
+    </PreferenceCategory>
+
+</PreferenceScreen>
