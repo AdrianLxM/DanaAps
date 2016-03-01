@@ -13,9 +13,7 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 
 import info.nightscout.client.broadcasts.Intents;
-import info.nightscout.danaapp.MainApp;
-import info.nightscout.danar.db.PumpStatus;
-import info.nightscout.utils.DateUtil;
+import info.nightscout.danaaps.MainApp;
 
 /**
  * Created by mike on 05.02.2016.

@@ -1,4 +1,4 @@
-package info.nightscout.danaapp;
+package info.nightscout.danaaps;
 
 import android.content.Context;
 import android.content.Intent;
@@ -10,12 +10,9 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Date;
 import java.util.List;
 
 import info.nightscout.client.broadcasts.Intents;
-import info.nightscout.danar.db.PumpStatus;
-import info.nightscout.utils.DateUtil;
 
 /**
  * Created by mike on 27.02.2016.

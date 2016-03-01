@@ -1,4 +1,4 @@
-package info.nightscout.danaapp.services;
+package info.nightscout.danaaps.services;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -19,14 +19,13 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import info.nightscout.danaapp.DeviceStatus;
+import info.nightscout.danaaps.DeviceStatus;
 import info.nightscout.danar.DanaConnection;
-import info.nightscout.danaapp.MainActivity;
-import info.nightscout.danaapp.MainApp;
-import info.nightscout.danaapp.ReceiverBG;
+import info.nightscout.danaaps.MainActivity;
+import info.nightscout.danaaps.MainApp;
+import info.nightscout.danaaps.ReceiverBG;
 import info.nightscout.danar.ServiceConnection;
-import info.nightscout.danaapp.calc.IobCalc;
-import info.nightscout.danar.db.PumpStatus;
+import info.nightscout.danaaps.calc.IobCalc;
 import info.nightscout.danar.event.LowSuspendStatus;
 import info.nightscout.danar.event.StatusEvent;
 import info.nightscout.utils.DateUtil;

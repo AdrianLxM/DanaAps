@@ -4,7 +4,7 @@ package info.nightscout.danar.event;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
-import info.nightscout.danaapp.MainApp;
+import info.nightscout.danaaps.MainApp;
 import info.nightscout.danar.db.PumpStatus;
 import info.nightscout.utils.DateUtil;
 

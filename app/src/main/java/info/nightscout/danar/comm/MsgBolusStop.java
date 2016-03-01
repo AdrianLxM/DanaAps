@@ -2,7 +2,6 @@ package info.nightscout.danar.comm;
 
 import com.squareup.otto.Bus;
 
-import info.nightscout.danaapp.MainApp;
 import info.nightscout.danar.event.BolusingEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

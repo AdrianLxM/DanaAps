@@ -1,4 +1,4 @@
-package info.nightscout.danaapp.bolus;
+package info.nightscout.danaaps.bolus;
 
 import android.app.Activity;
 import android.view.LayoutInflater;
@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import info.nightscout.danaapp.R;
+import info.nightscout.danaaps.R;
 import info.nightscout.danar.db.Bolus;
 
 import java.text.DateFormat;

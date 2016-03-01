@@ -1,4 +1,4 @@
-package info.nightscout.danaapp.tempBasal;
+package info.nightscout.danaaps.tempBasal;
 
 import android.app.Activity;
 import android.view.LayoutInflater;
@@ -7,10 +7,9 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import info.nightscout.danaapp.MainApp;
-import info.nightscout.danaapp.R;
-import info.nightscout.danaapp.Settings;
-import info.nightscout.danaapp.calc.IobCalc;
+import info.nightscout.danaaps.MainApp;
+import info.nightscout.danaaps.R;
+import info.nightscout.danaaps.calc.IobCalc;
 import info.nightscout.danar.db.TempBasal;
 
 import java.text.DateFormat;

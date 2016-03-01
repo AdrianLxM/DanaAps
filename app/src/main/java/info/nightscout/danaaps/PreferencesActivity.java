@@ -1,15 +1,15 @@
-package info.nightscout.danaapp;
+package info.nightscout.danaaps;
+
 
 import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
-import android.os.Bundle;
 import android.preference.PreferenceManager;
 
-/**
- * Created by mike on 02.01.2016.
- */
-public class Preferences extends PreferenceActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
+import info.nightscout.danar.event.PreferenceChange;
+
+public class PreferencesActivity extends PreferenceActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -19,6 +19,7 @@ public class Preferences extends PreferenceActivity implements SharedPreferences
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        MainApp.bus().post(new PreferenceChange());
     }
 
     public static class MyPreferenceFragment extends PreferenceFragment

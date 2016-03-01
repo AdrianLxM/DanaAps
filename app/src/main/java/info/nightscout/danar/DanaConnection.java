@@ -22,13 +22,12 @@ import com.squareup.otto.Bus;
 
 import info.nightscout.client.broadcasts.Intents;
 import info.nightscout.client.data.NSProfile;
-import info.nightscout.danaapp.MainApp;
-import info.nightscout.danaapp.VirtualPump;
-import info.nightscout.danaapp.tempBasal.Basal;
+import info.nightscout.danaaps.MainApp;
+import info.nightscout.danaaps.VirtualPump;
+import info.nightscout.danaaps.tempBasal.Basal;
 import info.nightscout.danar.alarm.ServiceAlarm;
 import info.nightscout.danar.comm.*;
 import info.nightscout.danar.db.Bolus;
-import info.nightscout.danar.db.Carbs;
 import info.nightscout.danar.db.PumpStatus;
 import info.nightscout.danar.db.TempBasal;
 import info.nightscout.danar.event.BolusingEvent;

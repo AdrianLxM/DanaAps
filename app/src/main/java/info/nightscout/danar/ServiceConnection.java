@@ -12,8 +12,8 @@ import android.os.Handler;
 import android.support.v7.app.NotificationCompat;
 import com.squareup.otto.Subscribe;
 
-import info.nightscout.danaapp.MainApp;
-import info.nightscout.danaapp.R;
+import info.nightscout.danaaps.MainApp;
+import info.nightscout.danaaps.R;
 import info.nightscout.danar.event.ConnectionStatusEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

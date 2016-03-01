@@ -1,4 +1,4 @@
-package info.nightscout.danaapp.tempBasal;
+package info.nightscout.danaaps.tempBasal;
 
 public class Basal {
     public Double   rate;                   //Temp Basal Rate for (U/hr) mode

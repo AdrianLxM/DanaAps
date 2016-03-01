@@ -1,4 +1,4 @@
-package info.nightscout.danaapp;
+package info.nightscout.danaaps;
 
 
 /**

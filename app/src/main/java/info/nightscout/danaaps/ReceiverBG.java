@@ -1,10 +1,10 @@
-package info.nightscout.danaapp;
+package info.nightscout.danaaps;
 
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.content.WakefulBroadcastReceiver;
 
-import info.nightscout.danaapp.services.ServiceBG;
+import info.nightscout.danaaps.services.ServiceBG;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

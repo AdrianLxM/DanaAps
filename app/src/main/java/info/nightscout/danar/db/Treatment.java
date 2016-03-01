@@ -17,8 +17,8 @@ import java.util.Date;
 import java.util.List;
 
 import info.nightscout.client.broadcasts.Intents;
-import info.nightscout.danaapp.MainApp;
-import info.nightscout.danaapp.calc.IobCalc;
+import info.nightscout.danaaps.MainApp;
+import info.nightscout.danaaps.calc.IobCalc;
 import info.nightscout.utils.DateUtil;
 
 /**

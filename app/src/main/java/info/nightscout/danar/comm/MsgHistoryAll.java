@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 import java.sql.SQLException;
 import java.util.Date;
 
-import info.nightscout.danaapp.MainApp;
+import info.nightscout.danaaps.MainApp;
 import info.nightscout.danar.db.HistoryRecord;
 
 /**

@@ -1,4 +1,4 @@
-package info.nightscout.danaapp.carbs;
+package info.nightscout.danaaps.carbs;
 
 import android.app.Activity;
 import android.app.DialogFragment;
@@ -7,7 +7,7 @@ import android.view.*;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
-import info.nightscout.danaapp.R;
+import info.nightscout.danaaps.R;
 
 public class TreatmentDialogFragment extends DialogFragment implements OnClickListener {
 

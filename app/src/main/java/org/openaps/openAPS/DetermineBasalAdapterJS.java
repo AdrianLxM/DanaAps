@@ -15,11 +15,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Calendar;
 
 import info.nightscout.client.data.NSProfile;
-import info.nightscout.danaapp.MainApp;
+import info.nightscout.danaaps.MainApp;
 
 public class DetermineBasalAdapterJS {
     private static Logger log = LoggerFactory.getLogger(DetermineBasalAdapterJS.class);

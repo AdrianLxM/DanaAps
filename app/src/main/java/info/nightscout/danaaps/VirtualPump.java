@@ -1,8 +1,7 @@
-package info.nightscout.danaapp;
+package info.nightscout.danaaps;
 
 import java.util.Date;
 
-import info.nightscout.danar.db.Bolus;
 import info.nightscout.danar.db.TempBasal;
 
 /**

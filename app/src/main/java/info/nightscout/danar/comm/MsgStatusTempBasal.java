@@ -1,7 +1,7 @@
 package info.nightscout.danar.comm;
 
 import android.support.annotation.NonNull;
-import info.nightscout.danaapp.MainApp;
+import info.nightscout.danaaps.MainApp;
 import info.nightscout.danar.event.StatusEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

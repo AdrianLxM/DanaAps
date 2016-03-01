@@ -1,8 +1,7 @@
-package info.nightscout.danaapp.calc;
+package info.nightscout.danaaps.calc;
 
-import info.nightscout.danaapp.MainActivity;
-import info.nightscout.danaapp.MainApp;
-import info.nightscout.danaapp.Settings;
+import info.nightscout.danaaps.MainApp;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

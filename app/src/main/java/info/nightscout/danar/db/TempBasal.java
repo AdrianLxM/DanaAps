@@ -2,7 +2,7 @@ package info.nightscout.danar.db;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
-import info.nightscout.danaapp.calc.IobCalc;
+import info.nightscout.danaaps.calc.IobCalc;
 
 import java.util.Calendar;
 import java.util.Date;

@@ -1,9 +1,7 @@
-package info.nightscout.danaapp;
+package info.nightscout.danaaps;
 
 import android.app.Application;
-import android.content.Context;
 import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.squareup.otto.Bus;
@@ -13,10 +11,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 
 import info.nightscout.client.data.NSProfile;
 import info.nightscout.danar.DanaConnection;

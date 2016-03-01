@@ -19,8 +19,8 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Calendar;
 
-import info.nightscout.danaapp.MainApp;
-import info.nightscout.danaapp.R;
+import info.nightscout.danaaps.MainApp;
+import info.nightscout.danaaps.R;
 
 public class AlarmMessage {
     private static Logger log = LoggerFactory.getLogger(AlarmMessage.class);

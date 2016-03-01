@@ -22,7 +22,7 @@ import java.util.List;
 
 import info.nightscout.client.broadcasts.Intents;
 import info.nightscout.client.data.NSProfile;
-import info.nightscout.danaapp.MainApp;
+import info.nightscout.danaaps.MainApp;
 import info.nightscout.danar.db.Treatment;
 import info.nightscout.danar.event.StatusEvent;
 

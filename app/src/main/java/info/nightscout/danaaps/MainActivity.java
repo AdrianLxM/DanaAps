@@ -1,4 +1,4 @@
-package info.nightscout.danaapp;
+package info.nightscout.danaaps;
 
 import android.app.Activity;
 import android.app.AlarmManager;
@@ -24,8 +24,8 @@ import com.joanzapata.iconify.Iconify;
 import com.joanzapata.iconify.fonts.FontAwesomeModule;
 import com.squareup.otto.Subscribe;
 
-import info.nightscout.danaapp.calc.IobCalc;
-import info.nightscout.danaapp.carbs.TreatmentDialogFragment;
+import info.nightscout.danaaps.calc.IobCalc;
+import info.nightscout.danaaps.carbs.TreatmentDialogFragment;
 import info.nightscout.client.receivers.NSClientDataReceiver;
 import info.nightscout.danar.DanaConnection;
 import info.nightscout.danar.db.DatabaseHelper;
