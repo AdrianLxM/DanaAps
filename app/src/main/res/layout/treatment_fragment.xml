@@ -8,6 +8,26 @@
     >
 
     <TextView
+        android:id="@+id/textViewInsulinTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:text="Insulin amount"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:layout_gravity="center_horizontal"/>
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text=""
+        android:id="@+id/insulinAmount"
+        android:padding="10dp"
+        android:minWidth="200dp"
+        android:layout_gravity="center_horizontal"
+        android:inputType="numberDecimal"/>
+
+    <TextView
         android:id="@+id/textViewCarbTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -37,7 +57,7 @@
         android:layout_marginRight="20dp">
 
     <Button
-        android:id="@+id/carbsDialogDeliverButton"
+        android:id="@+id/treatmentDialogDeliverButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="OK"

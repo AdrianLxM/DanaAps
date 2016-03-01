@@ -25,9 +25,9 @@ import com.joanzapata.iconify.fonts.FontAwesomeModule;
 import com.squareup.otto.Subscribe;
 
 import info.nightscout.danaapp.calc.IobCalc;
-import info.nightscout.danaapp.carbs.CarbsDialogFragment;
+import info.nightscout.danaapp.carbs.TreatmentDialogFragment;
+import info.nightscout.client.receivers.NSClientDataReceiver;
 import info.nightscout.danar.DanaConnection;
-import info.nightscout.danar.db.Bolus;
 import info.nightscout.danar.db.DatabaseHelper;
 import info.nightscout.danar.db.TempBasal;
 import info.nightscout.danar.db.Treatment;
@@ -46,6 +46,7 @@ import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -54,7 +55,7 @@ import info.nightscout.danar.event.StatusEvent;
 import info.nightscout.danar.event.StopEvent;
 
 public class MainActivity extends Activity
-        implements CarbsDialogFragment.Communicator {
+        implements TreatmentDialogFragment.Communicator {
     private static Logger log = LoggerFactory.getLogger(MainActivity.class);
 
     private static DecimalFormat format2digits = new DecimalFormat("00");
@@ -86,6 +87,7 @@ public class MainActivity extends Activity
     LinearLayout linearExtended;
 
     Button tbButton;
+    Button bolusStopButton;
     Button carbsButton;
     NavigationView mNavigationView;
 
@@ -99,6 +101,7 @@ public class MainActivity extends Activity
     private Switch switchOpenAPS;
     private Switch switchLowSuspend;
 
+    private boolean bolusStopButtonPressed = false;
 
     private void initNavDrawer() {
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -112,12 +115,12 @@ public class MainActivity extends Activity
 
         log.debug("onResume");
 
-        updateTempBasalUI();
-        updateBolusUI();
+        updateTempBasalIOB();
+        updateTreatmentsIOB();
 
         onStatusEvent(StatusEvent.getInstance());
 
-        updateLowSuspendData();
+        updateOpenAPSStatus();
 
     }
 
@@ -134,8 +137,8 @@ public class MainActivity extends Activity
 
         iob = (TextView) findViewById(R.id.iob);
         basalIob = (TextView) findViewById(R.id.basal_iob);
-        updateBolusUI();
-        updateTempBasalUI();
+        updateTreatmentsIOB();
+        updateTempBasalIOB();
 
         if(mHandler==null) {
             mHandlerThread = new HandlerThread(MainActivity.class.getSimpleName() + "Handler");
@@ -242,11 +245,11 @@ public class MainActivity extends Activity
                             DanaConnection dc = MainApp.getDanaConnection();
                             if (dc != null) {
                                 dc.connectIfNotConnected("tempBasal UI Button");
-                                if ("STOP".equals(tbButton.getText())) {
-                                    dc.tempBasalOff(true);
-                                } else {
-                                    dc.tempBasal(0, 1);
-                                }
+                                //if ("STOP".equals(tbButton.getText())) {
+                                dc.tempBasalOff(true);
+                                //} else {
+                                //    dc.tempBasal(0, 1);
+                                //}
                             } else
                                 log.error("tempBasal UI Button: dc==null");
                         } catch (Exception e) {
@@ -258,18 +261,45 @@ public class MainActivity extends Activity
             }
         });
 
-        carbsButton = (Button) findViewById(R.id.carbsButton);
+        bolusStopButton = (Button) findViewById(R.id.bolusStopButton);
+
+        bolusStopButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                try {
+                    bolusStopButtonPressed = true;
+                    final DanaConnection dc = MainApp.getDanaConnection();
+                    if (dc != null) {
+                        if (dc.isConnected()) {
+                            Thread t = new Thread() {
+                                @Override
+                                public void run() {
+                                    dc.bolusStop();
+                                }
+                            };
+                            t.start();
+                        }
+                    } else
+                        log.error("bolusStopButton UI Button: dc==null");
+                } catch (Exception e) {
+                    log.error("bolusStopButton", e);
+                }
+            }
+        });
+
+        carbsButton = (Button) findViewById(R.id.treatmentButton);
 
         carbsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 FragmentManager manager = getFragmentManager();
-                CarbsDialogFragment carbsDialogFragment = new CarbsDialogFragment();
-                carbsDialogFragment.show(manager, "CarbsDialog");
+                TreatmentDialogFragment treatmentDialogFragment = new TreatmentDialogFragment();
+                treatmentDialogFragment.show(manager, "TreatmentDialog");
             }
         });
     }
-    private void updateTempBasalUI() {
+    private void updateTempBasalIOB() {
         List<TempBasal> tempBasalList = loadTempBasalsDB();
 
         IobCalc.Iob iobNum = getIobFromTempBasals(tempBasalList);
@@ -312,7 +342,7 @@ public class MainActivity extends Activity
         return tempBasalList;
     }
 
-    private void updateBolusUI() {
+    private void updateTreatmentsIOB() {
         List<Treatment> treatmentList = null;
 
         treatmentList = loadTreatments();
@@ -322,50 +352,7 @@ public class MainActivity extends Activity
                 "IOB: " + formatNumber1place.format(iobNum.iobContrib) + " "
                         + formatNumber1place.format(iobNum.activityContrib));
     }
-/*
-    public static IobCalc.Iob getIobOpenAPSFromBoluses(List<Bolus> bolusList) {
-        IobCalc.Iob iob= new IobCalc.Iob ();
-        Iterator<Bolus> bolusIterator = bolusList.iterator();
-        while(bolusIterator.hasNext()) {
-            Bolus bolus = bolusIterator.next();
-            IobCalc.Iob calcIob = bolus.calcIobOpenAPS();
-            if(bolus.getMsAgo()>5*60*60_000) {
-                bolusIterator.remove();
-            }
-            iob= calcIob.plus(iob);
-        }
-        return iob;
-    }
 
-    public static IobCalc.Iob getIobFromBoluses(List<Bolus> bolusList) {
-        IobCalc.Iob iob= new IobCalc.Iob ();
-        Iterator<Bolus> bolusIterator = bolusList.iterator();
-        while(bolusIterator.hasNext()) {
-            Bolus bolus = bolusIterator.next();
-            IobCalc.Iob calcIob = bolus.calcIob();
-            if(bolus.getMsAgo()>5*60*60_000) {
-                bolusIterator.remove();
-            }
-            iob= calcIob.plus(iob);
-        }
-        return iob;
-    }
-
-    public static List<Bolus> loadBoluses() {
-        List<Bolus> bolusList = null;
-        try {
-            Dao<Bolus, Long> dao = MainApp.getDbHelper().getDaoBolus();
-            QueryBuilder<Bolus, Long> queryBuilder = dao.queryBuilder();
-            queryBuilder.orderBy("timeIndex",false);
-            queryBuilder.limit(4l);
-            PreparedQuery<Bolus> preparedQuery = queryBuilder.prepare();
-            bolusList = dao.query(preparedQuery);
-        } catch (SQLException e) {
-            log.debug(e.getMessage(),e);
-        }
-        return bolusList;
-    }
-*/
     public static IobCalc.Iob getIobOpenAPSFromTreatments(List<Treatment> treatmentList) {
         IobCalc.Iob iob= new IobCalc.Iob ();
         Iterator<Treatment> treatmentIterator = treatmentList.iterator();
@@ -457,11 +444,14 @@ public class MainActivity extends Activity
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                MainApp.instance().lastBolusingEvent = ev.sStatus;
                 if (ev.sStatus.equals("")) {
                     linearBolusing.setVisibility(LinearLayout.GONE);
+                    log.debug("BolusingEvent: hidding Linearlayout");
                 } else {
                     linearBolusing.setVisibility(LinearLayout.VISIBLE);
                     bolusingStatus.setText(ev.sStatus);
+                    ev.sendToNSClient();
                 }
             }
         });
@@ -502,7 +492,9 @@ public class MainActivity extends Activity
                     linearTemp.setVisibility(LinearLayout.GONE);
                 }
 
-                updateLowSuspendData();
+                updateOpenAPSStatus();
+                updateTempBasalIOB();
+                updateTreatmentsIOB();
             }
         });
     }
@@ -511,7 +503,7 @@ public class MainActivity extends Activity
         batteryStatus.setText("{fa-battery-" + (ev.remainBattery / 25) + "}");
     }
 
-    private void updateLowSuspendData() {
+    private void updateOpenAPSStatus() {
         LowSuspendStatus lowSuspendStatusRef = LowSuspendStatus.getInstance();
         lowSuspendData.setText(lowSuspendStatusRef.dataText);
         openApsStatus.setText(lowSuspendStatusRef.openApsText);
@@ -519,15 +511,50 @@ public class MainActivity extends Activity
     }
 
     @Override
-    public void carbsDialogDeliver(final int amount) {
+    public void treatmentDialogDeliver(final Double insulin, final Double carbs) {
 
         mHandler.post(new Runnable() {
             @Override
             public void run() {
-                DanaConnection dc = MainApp.getDanaConnection();
-                dc.connectIfNotConnected("carbsDialogDeliver");
+                Treatment t = new Treatment();
+                t.insulin = insulin;
+                t.carbs = carbs;
+                t.created_at = new Date();
                 try {
-                    dc.carbsEntry(amount);
+                    MainApp.instance().getDbHelper().getDaoTreatments().create(t);
+                    t.setTimeIndex(t.getTimeIndex());
+                    t.sendToNSClient();
+                    bolusStopButtonPressed = false;
+                    BolusingEvent be = BolusingEvent.getInstance();
+                    be.sStatus = "Connecting";
+                    MainApp.bus().post(be);
+                    synchronized (t) {
+                        t.wait(2000);
+                    }
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+
+                DanaConnection dc = MainApp.getDanaConnection();
+                dc.connectIfNotConnected("treatmentDialogDeliver");
+                try {
+                    if (t.carbs > 0d)
+                        dc.carbsEntry(carbs.intValue());
+                    if (t.insulin > 0d) {
+                        Treatment updated = NSClientDataReceiver.findByTimeIndex(t.getTimeIndex());
+                        String _id = "";
+                        if (updated._id == null || updated._id.equals("")) {
+                            log.debug("treatmentDialogDeliver: updated treatment id not found. Not updating NS site");
+                        } else _id = updated._id;
+                        if (bolusStopButtonPressed) {
+                            updated.insulin = 0d;
+                            MainApp.instance().getDbHelper().getDaoTreatments().update(updated);
+                        }
+                        dc.bolus(insulin, _id);
+                    }
                 } catch (Exception e) {
                     log.error(e.getMessage(), e);
                 }

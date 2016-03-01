@@ -1,17 +1,33 @@
 package info.nightscout.danar.db;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.pm.ResolveInfo;
+import android.os.Bundle;
+
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
-import java.util.Date;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.util.Date;
+import java.util.List;
+
+import info.nightscout.client.broadcasts.Intents;
+import info.nightscout.danaapp.MainApp;
 import info.nightscout.danaapp.calc.IobCalc;
+import info.nightscout.utils.DateUtil;
 
 /**
  * Created by mike on 28.02.2016.
  */
 @DatabaseTable(tableName = "Treatments")
 public class Treatment {
+    private static Logger log = LoggerFactory.getLogger(Treatment.class);
+
     public long getTimeIndex() {
         return (long) Math.ceil(created_at.getTime() / 60000d);
     }
@@ -31,10 +47,10 @@ public class Treatment {
     public Date created_at;
 
     @DatabaseField
-    public double insulin;
+    public Double insulin;
 
     @DatabaseField
-    public double carbs;
+    public Double carbs;
 
     public String log() {
         return "timeIndex: " + timeIndex + "_id: " + _id + " insulin: " + insulin + " carbs: " + carbs + " created_at: " + created_at.toString();
@@ -64,5 +80,32 @@ public class Treatment {
     public long getMsAgo() {
         return new Date().getTime() - created_at.getTime();
     }
+
+    public void sendToNSClient() {
+        Context context = MainApp.instance().getApplicationContext();
+        Bundle bundle = new Bundle();
+        bundle.putString("action", "dbAdd");
+        bundle.putString("collection", "treatments");
+        JSONObject data = new JSONObject();
+        try {
+            data.put("eventType", "Meal Bolus");
+            if (insulin != 0d) data.put("insulin", insulin);
+            if (carbs != 0d) data.put("carbs", carbs.intValue());
+            data.put("created_at", DateUtil.toISOString(created_at));
+            data.put("timeIndex", timeIndex);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        bundle.putString("data", data.toString());
+        Intent intent = new Intent(Intents.ACTION_DATABASE);
+        intent.putExtras(bundle);
+        intent.addFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
+        context.sendBroadcast(intent);
+        List<ResolveInfo> q = context.getPackageManager().queryBroadcastReceivers(intent, 0);
+        if (q.size() < 1) {
+            log.error("DBADD No receivers");
+        } else log.debug("DBADD dbAdd " + q.size() + " receivers " + data.toString());
+    }
+
 
 }

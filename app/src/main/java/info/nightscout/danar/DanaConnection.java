@@ -65,6 +65,7 @@ public class DanaConnection {
     private BluetoothDevice mDevice;
     private boolean connectionEnabled = false;
     PowerManager.WakeLock mWakeLock;
+    private String bolusingId = null;
 
     private static final UUID SPP_UUID = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb");
 
@@ -226,7 +227,7 @@ public class DanaConnection {
         }
     }
 
-    private boolean isConnected() {
+    public boolean isConnected() {
         if (isVirtualPump()) {
             return true;
         }
@@ -743,13 +744,15 @@ public class DanaConnection {
         temp.start();
     }
 
-    public void bolus(int amount, String _id) throws Exception {
+    public void bolus(Double amount, String _id)  {
         if (isVirtualPump()) {
             VirtualPump vp = VirtualPump.getInstance();
             vp.last_bolus_amount = amount;
             vp.last_bolus_time = new Date();
         } else {
-            MsgBolusStart msg = new MsgBolusStart(amount, "");
+            bolusingId = _id;
+            MainApp.instance().lastBolusingEvent = "";
+            MsgBolusStart msg = new MsgBolusStart(amount, _id);
             MsgBolusProgress progress = new MsgBolusProgress(MainApp.bus(), amount, _id);
             MsgBolusStop stop = new MsgBolusStop(MainApp.bus(), _id);
 
@@ -761,38 +764,43 @@ public class DanaConnection {
                 mSerialEngine.expectMessage(progress);
             }
         }
+        bolusingId = null;
         pingStatus();
+        waitMsec(2000);
+        BolusingEvent be = BolusingEvent.getInstance();
+        be.sStatus = "";
+        mBus.post(be);
     }
 
-    public void bolusStop(String _id) throws Exception {
+    public void bolusStop()  {
+        log.debug("bolusStop >>>>> @" + MainApp.instance().lastBolusingEvent);
+        String lastBolusingEvent = MainApp.instance().lastBolusingEvent;
+        String lastBolusingId = bolusingId;
         if (isVirtualPump()) {
         } else {
-            MsgBolusStop stop = new MsgBolusStop(MainApp.bus(), _id);
+            MsgBolusStop stop = new MsgBolusStop(MainApp.bus(), bolusingId == null ? "" : bolusingId);
             mSerialEngine.sendMessage(stop);
             while (!stop.stopped) {
                 mSerialEngine.sendMessage(stop);
             }
+            // Wait for processing all bolus events
+            waitMsec(5000);
+            // and update ns status to last amount
+            BolusingEvent be = BolusingEvent.getInstance();
+            be.sStatus = lastBolusingEvent.replace("Delivering ", "") + " ONLY";
+            be._id = lastBolusingId;
+            mBus.post(BolusingEvent.getInstance());
+            waitMsec(60000);
+            be.sStatus = "";
+            mBus.post(be);
         }
-        pingStatus();
     }
 
     public void carbsEntry(int amount) {
         Calendar time = Calendar.getInstance();
         MsgCarbsEntry msg = new MsgCarbsEntry(time, amount);
         mSerialEngine.sendMessage(msg);
-
-        try {
-
-            Dao<Carbs, Long> daoTempBasals = MainApp.getDbHelper().getDaoCarbs();
-            Carbs carbs = new Carbs();
-            carbs.timeStart = time.getTime();
-            carbs.amount = amount;
-
-            daoTempBasals.create(carbs);
-        } catch (SQLException e) {
-            log.error(e.getMessage(), e);
-        }
-
+        //pingStatus();
     }
 
     public void updateBasalsInPump() {
@@ -880,5 +888,16 @@ public class DanaConnection {
 
     public boolean isVirtualPump() {
         return devName.equals("VirtualPump");
+    }
+
+    public void waitMsec(long msecs) {
+        Object o = new Object();
+        synchronized (o) {
+            try {
+                o.wait(msecs);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

@@ -44,6 +44,7 @@ public class MsgBolusProgress extends DanaRMessage {
 //        bolusUI.bolusDelivering();
         BolusingEvent bolusingEvent = BolusingEvent.getInstance();
         bolusingEvent.sStatus = "Delivering " + bolusNumberFormat.format((amount * 100 - progress) / 100d) + "U";
+        bolusingEvent._id = _id;
         bus.post(bolusingEvent);
     }
 

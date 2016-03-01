@@ -1,6 +1,5 @@
-package info.nightscout.danaapp.receivers;
+package info.nightscout.client.receivers;
 
-import android.accounts.Account;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -25,7 +24,7 @@ import info.nightscout.client.broadcasts.Intents;
 import info.nightscout.client.data.NSProfile;
 import info.nightscout.danaapp.MainApp;
 import info.nightscout.danar.db.Treatment;
-import info.nightscout.utils.DateUtil;
+import info.nightscout.danar.event.StatusEvent;
 
 public class NSClientDataReceiver extends BroadcastReceiver {
     private static Logger log = LoggerFactory.getLogger(NSClientDataReceiver.class);
@@ -60,17 +59,30 @@ public class NSClientDataReceiver extends BroadcastReceiver {
                     log.debug("ADD: Uninterested treatment: " + trstring);
                     return;
                 }
+
+                Treatment stored = null;
                 trJson = new JSONObject(trstring);
                 String _id = trJson.getString("_id");
 
-                Treatment stored = findById(_id);
+                if (trJson.has("timeIndex")) {
+                    log.debug("ADD: timeIndex found: " + trstring);
+                    stored = findByTimeIndex(trJson.getLong("timeIndex"));
+                } else {
+                    stored = findById(_id);
+                }
+
                 if (stored != null) {
                     log.debug("ADD: Existing treatment: " + trstring);
+                    if (trJson.has("timeIndex")) {
+                        stored._id = _id;
+                        MainApp.getDbHelper().getDaoTreatments().update(stored);
+                    }
+                    return;
                 } else {
                     log.debug("ADD: New treatment: " + trstring);
                     Treatment treatment = new Treatment();
                     treatment._id = _id;
-                    treatment.carbs = trJson.has("carbs") ? trJson.getInt("carbs") : 0;
+                    treatment.carbs = trJson.has("carbs") ? trJson.getDouble("carbs") : 0;
                     treatment.insulin = trJson.has("insulin") ? trJson.getDouble("insulin") : 0d;
                     //treatment.created_at = DateUtil.fromISODateString(trJson.getString("created_at"));
                     treatment.created_at = new Date(trJson.getLong("mills"));
@@ -78,6 +90,7 @@ public class NSClientDataReceiver extends BroadcastReceiver {
                     try {
                         MainApp.getDbHelper().getDaoTreatments().create(treatment);
                         log.debug("ADD: Stored treatment: " + treatment.log());
+                        MainApp.bus().post(StatusEvent.getInstance());
                     } catch (SQLException e) {
                         e.printStackTrace();
                     }
@@ -102,19 +115,28 @@ public class NSClientDataReceiver extends BroadcastReceiver {
                 trJson = new JSONObject(trstring);
                 String _id = trJson.getString("_id");
 
-                Treatment stored = findById(_id);
+                Treatment stored;
+
+                if (trJson.has("timeIndex")) {
+                    log.debug("ADD: timeIndex found: " + trstring);
+                    stored = findByTimeIndex(trJson.getLong("timeIndex"));
+                } else {
+                    stored = findById(_id);
+                }
+
                 if (stored != null) {
                     log.debug("CHANGE: Existing treatment: " + trstring);
                     stored._id = _id;
-                    stored.carbs = trJson.has("carbs") ? trJson.getInt("carbs") : 0;
+                    stored.carbs = trJson.has("carbs") ? trJson.getDouble("carbs") : 0;
                     stored.insulin = trJson.has("insulin") ? trJson.getDouble("insulin") : 0d;
                     stored.created_at = new Date(trJson.getLong("mills"));
                     MainApp.getDbHelper().getDaoTreatments().update(stored);
+                    MainApp.bus().post(StatusEvent.getInstance());
                 } else {
                     log.debug("CHANGE: New treatment: " + trstring);
                     Treatment treatment = new Treatment();
                     treatment._id = _id;
-                    treatment.carbs = trJson.has("carbs") ? trJson.getInt("carbs") : 0;
+                    treatment.carbs = trJson.has("carbs") ? trJson.getDouble("carbs") : 0;
                     treatment.insulin = trJson.has("insulin") ? trJson.getDouble("insulin") : 0d;
                     //treatment.created_at = DateUtil.fromISODateString(trJson.getString("created_at"));
                     treatment.created_at = new Date(trJson.getLong("mills"));
@@ -122,6 +144,7 @@ public class NSClientDataReceiver extends BroadcastReceiver {
                     try {
                         MainApp.getDbHelper().getDaoTreatments().create(treatment);
                         log.debug("CHANGE: Stored treatment: " + treatment.log());
+                        MainApp.bus().post(StatusEvent.getInstance());
                     } catch (SQLException e) {
                         e.printStackTrace();
                     }
@@ -138,10 +161,6 @@ public class NSClientDataReceiver extends BroadcastReceiver {
             try {
                 String trstring = bundles.getString("treatment");
                 JSONObject trJson = new JSONObject(trstring);
-                if (!trJson.has("insulin") && !trJson.has("carbs")) {
-                    log.debug("REMOVE: Uninterested treatment: " + trstring);
-                    return;
-                }
                 trJson = new JSONObject(trstring);
                 String _id = trJson.getString("_id");
 
@@ -149,6 +168,7 @@ public class NSClientDataReceiver extends BroadcastReceiver {
                 if (stored != null) {
                     log.debug("REMOVE: Existing treatment (removing): " + trstring);
                     MainApp.getDbHelper().getDaoTreatments().delete(stored);
+                    MainApp.bus().post(StatusEvent.getInstance());
                 } else {
                     log.debug("REMOVE: Not stored treatment (ignoring): " + trstring);
                 }
@@ -170,7 +190,7 @@ public class NSClientDataReceiver extends BroadcastReceiver {
         editor.commit();
     }
 
-    Treatment findById(String _id) {
+    public static Treatment findById(String _id) {
         try {
             QueryBuilder<Treatment, String> qb = null;
             Dao<Treatment, Long> daoTreatments = MainApp.getDbHelper().getDaoTreatments();
@@ -185,6 +205,29 @@ public class NSClientDataReceiver extends BroadcastReceiver {
                 return null;
             } else {
                 //log.debug("Treatment findById found: " + trList.get(0).log());
+                return trList.get(0);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static Treatment findByTimeIndex(Long timeIndex) {
+        try {
+            QueryBuilder<Treatment, String> qb = null;
+            Dao<Treatment, Long> daoTreatments = MainApp.getDbHelper().getDaoTreatments();
+            QueryBuilder<Treatment, Long> queryBuilder = daoTreatments.queryBuilder();
+            Where where = queryBuilder.where();
+            where.eq("timeIndex", timeIndex);
+            queryBuilder.limit(10);
+            PreparedQuery<Treatment> preparedQuery = queryBuilder.prepare();
+            List<Treatment> trList = daoTreatments.query(preparedQuery);
+            if (trList.size() != 1) {
+                log.debug("Treatment findByTimeIndex query size: " + trList.size());
+                return null;
+            } else {
+                log.debug("Treatment findByTimeIndex found: " + trList.get(0).log());
                 return trList.get(0);
             }
         } catch (SQLException e) {

@@ -37,6 +37,7 @@ public class MsgBolusStop extends DanaRMessage {
 //        bolusUI.bolusFinished();
         BolusingEvent bolusingEvent = BolusingEvent.getInstance();
         bolusingEvent.sStatus = "Delivered";
+        bolusingEvent._id = _id;
         bus.post(bolusingEvent);
     }
 

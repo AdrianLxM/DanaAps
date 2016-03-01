@@ -207,6 +207,7 @@ public class ServiceBG extends android.app.IntentService {
                 log.info("No Action: Temp basal as requested: " + tempPercent + " tempBasalRatio:" + statusEvent.tempBasalRatio);
             }
             deviceStatus.sendToNSClient();
+            MainApp.bus().post(StatusEvent.getInstance());
 
         } catch (Throwable x){
             log.error(x.getMessage(),x);
