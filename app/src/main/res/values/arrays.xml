@@ -4,7 +4,7 @@
     <string-array name="ns_sync_profile_values">
         <item>None</item>
         <item>NS -> Pump</item>
-        <item>Pump -> NS</item>
+<!--        <item>Pump -> NS</item> -->
     </string-array>
     <string-array name="Units">
         <item>mg/dL</item>

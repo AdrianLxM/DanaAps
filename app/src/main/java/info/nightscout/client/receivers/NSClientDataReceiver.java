@@ -46,6 +46,9 @@ public class NSClientDataReceiver extends BroadcastReceiver {
                 MainApp.instance().setNSProfile(nsProfile);
                 MainApp.instance().setActiveProfile(activeProfile);
                 storeNSProfile();
+                if (MainApp.getDanaConnection() != null) {
+                    MainApp.getDanaConnection().updateBasalsInPump();
+                }
                 log.debug("Received profile: " + activeProfile + " " + profile);
             } catch (JSONException e) {
                 e.printStackTrace();

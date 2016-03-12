@@ -25,13 +25,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:background="@drawable/bgorange">
+            android:background="@drawable/bgbrown">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:background="@drawable/bgblue">
+                android:orientation="horizontal">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -39,7 +38,8 @@
                     android:paddingRight="20dp"
                     android:text="Pump:"
                     android:textSize="16dp"
-                    android:layout_gravity="center_vertical" />
+                    android:layout_gravity="center_vertical"
+                    android:textColor="#bdbdbd" />
 
                 <TextView
                     android:id="@+id/connectedPump"
@@ -50,7 +50,8 @@
                     android:layout_weight="0.62"
                     android:gravity="center_vertical|right"
                     android:text=""
-                    android:textSize="22dp"/>
+                    android:textSize="22dp"
+                    android:background="@drawable/bgblue"/>
             </LinearLayout>
 
             <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -63,8 +64,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingRight="20dp"
-                    android:text="Last connection:"
-                    android:textSize="16dp"/>
+                    android:text="Last conn:"
+                    android:textSize="16dp"
+                    android:layout_gravity="center_vertical"
+                    android:textColor="#bdbdbd" />
 
                 <com.joanzapata.iconify.widget.IconTextView
                     android:layout_width="wrap_content"
@@ -72,8 +75,9 @@
                     android:layout_weight="1"
                     android:gravity="center_vertical|right"
                     android:textSize="20dp"
-                    android:id="@+id/lastconnclock"
-                    />
+                    android:text="{fa-clock-o}"
+                    android:layout_gravity="center_vertical"
+                    android:textColor="#bdbdbd" />
 
                 <TextView
                     android:id="@+id/lastCheck"
@@ -93,7 +97,8 @@
                     android:layout_weight="0.47"
                     android:gravity="center_vertical|right"
                     android:text=""
-                    android:textSize="22dp"/>
+                    android:textSize="22dp"
+                    android:layout_gravity="center_vertical" />
 
 
                 <com.joanzapata.iconify.widget.IconTextView
@@ -106,7 +111,7 @@
                     android:text=""
                     android:textSize="20dp"
                     android:id="@+id/connection"
-                    />
+                    android:layout_gravity="center_vertical" />
 
             </LinearLayout>
 
@@ -119,7 +124,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Reservoir:"
-                    android:textSize="16dp"/>
+                    android:textSize="16dp"
+                    android:layout_gravity="center_vertical"
+                    android:textColor="#bdbdbd" />
 
                 <TextView
                     android:id="@+id/uRemaining"
@@ -136,7 +143,9 @@
                     android:layout_height="wrap_content"
                     android:paddingLeft="5dp"
                     android:text="Basal:"
-                    android:textSize="16dp"/>
+                    android:textSize="16dp"
+                    android:layout_gravity="center_vertical"
+                    android:textColor="#bdbdbd" />
 
                 <TextView
                     android:id="@+id/currentBasal"
@@ -159,7 +168,9 @@
                     android:layout_height="wrap_content"
                     android:text="Temp:"
                     android:paddingRight="20dp"
-                    android:textSize="16dp"/>
+                    android:textSize="16dp"
+                    android:layout_gravity="center_vertical"
+                    android:textColor="#bdbdbd" />
 
 
                 <TextView
@@ -181,6 +192,7 @@
                     android:gravity="center_vertical|right"
                     android:textSize="20dp"
                     android:id="@+id/tempBasalclock"
+                    android:textColor="#bdbdbd"
                     />
 
                 <TextView
@@ -214,8 +226,9 @@
                     android:layout_height="wrap_content"
                     android:paddingRight="20dp"
                     android:text="Last bolus:"
-                    android:id="@+id/textView"
-                    android:textSize="16dp"/>
+                    android:textSize="16dp"
+                    android:layout_gravity="center_vertical"
+                    android:textColor="#bdbdbd" />
 
                 <com.joanzapata.iconify.widget.IconTextView
                     android:layout_width="wrap_content"
@@ -223,8 +236,9 @@
                     android:layout_weight="1"
                     android:gravity="center_vertical|right"
                     android:textSize="20dp"
-                    android:id="@+id/lastbolusclock"
-                    />
+                    android:text="{fa-clock-o}"
+                    android:layout_gravity="center_vertical"
+                    android:textColor="#bdbdbd" />
 
                 <TextView
                     android:id="@+id/lastBolusTime"
@@ -234,7 +248,8 @@
                     android:paddingRight="5dp"
                     android:layout_weight="1"
                     android:text=""
-                    android:textSize="22dp"/>
+                    android:textSize="22dp"
+                    android:layout_gravity="center_vertical" />
 
                 <TextView
                     android:id="@+id/lastBolusAmount"
@@ -245,7 +260,8 @@
                     android:layout_weight="0.62"
                     android:gravity="center_vertical|right"
                     android:text=""
-                    android:textSize="22dp"/>
+                    android:textSize="22dp"
+                    android:layout_gravity="center_vertical" />
 
             </LinearLayout>
             <LinearLayout
@@ -260,7 +276,9 @@
                     android:layout_height="wrap_content"
                     android:paddingRight="20dp"
                     android:text="Bolusing:"
-                     android:textSize="16dp"/>
+                    android:textSize="16dp"
+                    android:layout_gravity="center_vertical"
+                    android:textColor="#bdbdbd" />
 
                 <TextView
                     android:id="@+id/bolusingStatus"
@@ -293,8 +311,9 @@
                     android:layout_height="wrap_content"
                     android:paddingRight="20dp"
                     android:text="Extended:"
-                    android:id="@+id/textView"
-                    android:textSize="16dp"/>
+                    android:textSize="16dp"
+                    android:layout_gravity="center_vertical"
+                    android:textColor="#bdbdbd" />
 
                 <TextView
                     android:id="@+id/extendedBolusSoFar"
@@ -317,6 +336,359 @@
                     android:gravity="center_vertical|right"
                     android:text=""
                     android:textSize="22dp"/>
+
+            </LinearLayout>
+        </LinearLayout>
+
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/bggray"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp">
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <com.joanzapata.iconify.widget.IconTextView
+                android:text="{fa-clock-o}"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:textSize="20sp"
+                android:gravity="center_vertical"
+                android:layout_marginLeft="50dp"
+                android:textColor="#bdbdbd" />
+
+            <TextView
+                android:id="@+id/bgTime"
+                android:text=""
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:textSize="20sp"
+                android:gravity="center_vertical"
+                />
+
+            <com.joanzapata.iconify.widget.IconTextView
+                android:text="{fa-tint}"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:textSize="20sp"
+                android:gravity="center_vertical"
+                android:textColor="#bdbdbd" />
+
+            <TextView
+                android:id="@+id/bgValue"
+                android:text=""
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:textSize="20sp"
+                android:gravity="center_vertical"
+                />
+
+            <TextView
+                android:text="∆"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:textSize="13sp"
+                android:gravity="center_vertical"
+                android:textColor="#bdbdbd" />
+
+            <TextView
+                android:id="@+id/bgDelta"
+                android:text=""
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:textSize="20sp"
+                android:gravity="center_vertical"
+                android:layout_marginRight="50dp" />
+
+        </LinearLayout>
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:text="∆15"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:textSize="13sp"
+                android:gravity="center_vertical"
+                android:textColor="#bdbdbd" />
+
+            <TextView
+                android:id="@+id/bgDeltaAvg15m"
+                android:text=""
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:textSize="20sp"
+                android:gravity="center_vertical"
+                />
+
+            <TextView
+                android:text="∆30"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:textSize="13sp"
+                android:gravity="center_vertical"
+                android:textColor="#bdbdbd" />
+
+            <TextView
+                android:id="@+id/bgDeltaAvg30m"
+                android:text=""
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:textSize="20sp"
+                android:gravity="center_vertical"
+                />
+
+            <TextView
+                android:text="ø15"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:textSize="13sp"
+                android:gravity="center_vertical"
+                android:textColor="#bdbdbd" />
+
+            <TextView
+                android:id="@+id/bgAvg15m"
+                android:text=""
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:textSize="20sp"
+                android:gravity="center_vertical"
+                />
+
+            <TextView
+                android:text="ø30m"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:textSize="13sp"
+                android:gravity="center_vertical"
+                android:textColor="#bdbdbd" />
+
+            <TextView
+                android:id="@+id/bgAvg30m"
+                android:text=""
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:textSize="20sp"
+                android:gravity="center_vertical"
+                />
+
+        </LinearLayout>
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                    xmlns:tools="http://schemas.android.com/tools"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingRight="20dp"
+                        android:text="Low suspend:"
+                        android:textSize="16dp"
+                        android:layout_gravity="center_vertical"
+                        android:textColor="#bdbdbd" />
+
+                    <com.joanzapata.iconify.widget.IconTextView
+                        android:id="@+id/lowSuspend"
+                        android:text=""
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="3"
+                        android:textSize="20sp"
+                        android:gravity="center_vertical"
+                        />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingRight="20dp"
+                        android:text="projected:"
+                        android:textSize="16dp"
+                        android:layout_gravity="center_vertical"
+                        android:textColor="#bdbdbd" />
+
+                    <com.joanzapata.iconify.widget.IconTextView
+                        android:id="@+id/lowSuspendProjected"
+                        android:text=""
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="3"
+                        android:textSize="20sp"
+                        android:gravity="center_vertical"
+                        />
+                    <Switch
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        android:id="@+id/switchLowSuspend"
+                        />
+                </LinearLayout>
+
+                <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                    xmlns:tools="http://schemas.android.com/tools"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    >
+                    <TextView
+                        android:text="OpenAPS"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="3"
+                        android:textSize="16sp"
+                        android:gravity="center_vertical"
+                        android:textColor="#bdbdbd" />
+
+                    <Switch
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        android:id="@+id/switchOpenAPS"
+                        />
+
+                </LinearLayout>
+
+                <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                    xmlns:tools="http://schemas.android.com/tools"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    >
+                    <TextView
+                        android:id="@+id/OpenApsStatus"
+                        android:text=""
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="3"
+                        android:textSize="20sp"
+                        android:gravity="center_vertical"
+                        />
+
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Bolus IOB:"
+                    android:layout_weight="3"
+                    android:textSize="16dp"
+                    android:layout_gravity="center_vertical"
+                    android:textColor="#bdbdbd"
+                    android:layout_marginRight="5dp" />
+
+                <TextView
+                    android:id="@+id/iob"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="3"
+                    android:text=""
+                    android:gravity="center_vertical"
+                    android:textSize="20dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="activity:"
+                    android:textSize="16dp"
+                    android:layout_gravity="center_vertical"
+                    android:textColor="#bdbdbd"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp" />
+
+                <TextView
+                    android:id="@+id/iobActivity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="3"
+                    android:text=""
+                    android:gravity="center_vertical"
+                    android:textSize="20dp"/>
+
+            </LinearLayout>
+
+            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Basal IOB:"
+                    android:textSize="16dp"
+                    android:layout_weight="3"
+                    android:layout_gravity="center_vertical"
+                    android:textColor="#bdbdbd"
+                    android:layout_marginRight="5dp" />
+
+                <TextView
+                    android:id="@+id/basal_iob"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:layout_weight="3"
+                    android:gravity="center_vertical"
+                    android:textSize="20dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="activity:"
+                    android:textSize="16dp"
+                    android:layout_gravity="center_vertical"
+                    android:textColor="#bdbdbd"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp" />
+
+                <TextView
+                    android:id="@+id/basal_iobActivity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:layout_weight="3"
+                    android:gravity="center_vertical"
+                    android:textSize="20dp"/>
 
             </LinearLayout>
         </LinearLayout>
@@ -348,155 +720,12 @@
                 android:layout_height="wrap_content"
                 android:text="Treatment"
                 android:layout_weight="0.30"
-                android:id="@+id/treatmentButton"/>
+                android:id="@+id/treatmentButton"
+                android:background="#FFB347" />
 
         </LinearLayout>
 
 
-        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                      xmlns:tools="http://schemas.android.com/tools"
-                      android:layout_width="match_parent"
-                      android:layout_height="wrap_content"
-                      android:orientation="vertical"
-            >
-
-
-            <LinearLayout
-                xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="1dp"
-                android:orientation="horizontal"
-                android:layout_marginLeft="0dp"
-                android:layout_marginRight="0dp"
-                android:id="@+id/bolusLayout">
-
-            </LinearLayout>
-
-            <ProgressBar
-                android:id="@+id/bolusProgressBar"
-                android:layout_height="4dp"
-                android:layout_width="match_parent"
-                style="@android:style/Widget.ProgressBar.Horizontal"
-                android:layout_alignParentBottom="true"
-                android:layout_margin="1dp"
-                android:minHeight="3dp"
-                android:maxHeight="5dp"
-                />
-
-
-        </LinearLayout>
-
-
-        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                      xmlns:tools="http://schemas.android.com/tools"
-                      android:layout_width="match_parent"
-                      android:layout_height="wrap_content"
-                      android:orientation="vertical"
-            >
-
-            <TextView
-                android:id="@+id/lowSuspendData"
-                android:text="..."
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="3"
-                android:textSize="13sp"
-                android:gravity="center_vertical"
-                />
-            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                          xmlns:tools="http://schemas.android.com/tools"
-                          android:layout_width="match_parent"
-                          android:layout_height="wrap_content"
-                          android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/lowSuspendStatus"
-                    android:text="..."
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="3"
-                    android:textSize="13sp"
-                    android:gravity="center_vertical"
-                    />
-                <Switch
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text=""
-                    android:id="@+id/switchLowSuspend"
-                    />
-            </LinearLayout>
-
-            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                          xmlns:tools="http://schemas.android.com/tools"
-                          android:layout_width="match_parent"
-                          android:layout_height="wrap_content"
-                          android:orientation="horizontal"
-                >
-                <TextView
-                    android:id="@+id/OpenApsStatus"
-                    android:text="..."
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="3"
-                    android:textSize="13sp"
-                    android:gravity="center_vertical"
-                    />
-
-                <Switch
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text=""
-                    android:id="@+id/switchOpenAPS"
-                    />
-
-            </LinearLayout>
-        </LinearLayout>
-
-
-        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                      xmlns:tools="http://schemas.android.com/tools"
-                      android:layout_width="match_parent"
-                      android:layout_height="wrap_content"
-                      android:orientation="vertical"
-            >
-
-            <TextView
-                android:id="@+id/iob"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="15dp"
-                android:background="@drawable/edit_text_bg"
-                android:paddingLeft="5dp"
-                android:paddingRight="5dp"
-                android:layout_weight="1"
-                android:text="IOB 0.0"
-                android:gravity="center_vertical|right"
-                android:textSize="16dp"/>
-
-        </LinearLayout>
-
-        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                      xmlns:tools="http://schemas.android.com/tools"
-                      android:layout_width="match_parent"
-                      android:layout_height="wrap_content"
-                      android:orientation="vertical"
-            >
-
-            <TextView
-                android:id="@+id/basal_iob"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="15dp"
-                android:background="@drawable/edit_text_bg"
-                android:paddingLeft="5dp"
-                android:paddingRight="5dp"
-                android:layout_weight="1"
-                android:text="bIOB 0.0 0.0"
-                android:gravity="center_vertical|right"
-                android:textSize="16dp"/>
-
-        </LinearLayout>
     </LinearLayout>
 
     <android.support.design.widget.NavigationView

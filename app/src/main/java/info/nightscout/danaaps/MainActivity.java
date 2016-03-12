@@ -61,6 +61,7 @@ public class MainActivity extends Activity
     private static DecimalFormat format2digits = new DecimalFormat("00");
     private static DecimalFormat formatNumber1place = new DecimalFormat("0.00");
     private static DateFormat formatDateToJustTime = new SimpleDateFormat("HH:mm");
+    public static final DecimalFormat mmolFormat = new DecimalFormat("0.0");
 
     TextView connectedPump;
     TextView uRemaining;
@@ -80,7 +81,17 @@ public class MainActivity extends Activity
 
     TextView iob;
     TextView basalIob;
+    TextView iobActivity;
+    TextView basalIobActivity;
     TextView connection;
+
+    private TextView bgTime;
+    private TextView bgValue;
+    private TextView bgDelta;
+    private TextView bgDeltaAvg15m;
+    private TextView bgDeltaAvg30m;
+    private TextView bgAvg15m;
+    private TextView bgAvg30m;
 
     LinearLayout linearTemp;
     LinearLayout linearBolusing;
@@ -95,8 +106,8 @@ public class MainActivity extends Activity
 
     static Handler mHandler;
     static private HandlerThread mHandlerThread;
-    private TextView lowSuspendData;
-    private TextView lowSuspendStatus;
+    private TextView lowSuspend;
+    private TextView lowSuspendProjected;
     private TextView openApsStatus;
     private Switch switchOpenAPS;
     private Switch switchLowSuspend;
@@ -134,9 +145,8 @@ public class MainActivity extends Activity
         setContentView(R.layout.activity_main);
 
         initNavDrawer();
+        registerGUIElements();
 
-        iob = (TextView) findViewById(R.id.iob);
-        basalIob = (TextView) findViewById(R.id.basal_iob);
         updateTreatmentsIOB();
         updateTempBasalIOB();
 
@@ -157,12 +167,14 @@ public class MainActivity extends Activity
         registerBus();
         getApplicationContext().sendBroadcast(new Intent("danaapp.danaapp.ReceiverKeepAlive.action.PING"));
 
-        registerGUIElements();
     }
 
     private void registerGUIElements() {
-        ((TextView) findViewById(R.id.lastconnclock)).setText("{fa-clock-o}");
-        ((TextView) findViewById(R.id.lastbolusclock)).setText("{fa-clock-o}");
+        iob = (TextView) findViewById(R.id.iob);
+        basalIob = (TextView) findViewById(R.id.basal_iob);
+        iobActivity = (TextView) findViewById(R.id.iobActivity);
+        basalIobActivity = (TextView) findViewById(R.id.basal_iobActivity);
+
         uRemaining = (TextView) findViewById(R.id.uRemaining);
         batteryStatus = (TextView) findViewById(R.id.batteryStatus);
         tempBasalRatio = (TextView) findViewById(R.id.tempBasalRatio);
@@ -200,9 +212,17 @@ public class MainActivity extends Activity
             }
         });
 
-        lowSuspendData = (TextView) findViewById(R.id.lowSuspendData);
+        bgTime = (TextView) findViewById(R.id.bgTime);
+        bgValue = (TextView) findViewById(R.id.bgValue);
+        bgDelta = (TextView) findViewById(R.id.bgDelta);
+        bgDeltaAvg15m = (TextView) findViewById(R.id.bgDeltaAvg15m);
+        bgDeltaAvg30m = (TextView) findViewById(R.id.bgDeltaAvg30m);
+        bgAvg15m = (TextView) findViewById(R.id.bgAvg15m);
+        bgAvg30m = (TextView) findViewById(R.id.bgAvg30m);
+
         openApsStatus = (TextView) findViewById(R.id.OpenApsStatus);
-        lowSuspendStatus = (TextView) findViewById(R.id.lowSuspendStatus);
+        lowSuspend = (TextView) findViewById(R.id.lowSuspend);
+        lowSuspendProjected = (TextView) findViewById(R.id.lowSuspendProjected);
         switchLowSuspend = (Switch) findViewById(R.id.switchLowSuspend);
         switchOpenAPS = (Switch) findViewById(R.id.switchOpenAPS);
 
@@ -304,9 +324,8 @@ public class MainActivity extends Activity
 
         IobCalc.Iob iobNum = getIobFromTempBasals(tempBasalList);
         Double sens = MainApp.getNSProfile() != null ? MainApp.getNSProfile().getIsf(MainApp.getNSProfile().minutesFromMidnight()) : 0;
-        basalIob.setText(
-                "bIOB: " + formatNumber1place.format(iobNum.iobContrib) + " "
-                        + formatNumber1place.format(iobNum.activityContrib * sens));
+        basalIob.setText(formatNumber1place.format(iobNum.iobContrib));
+        basalIobActivity.setText(formatNumber1place.format(iobNum.activityContrib * sens));
     }
 
     public static IobCalc.Iob getIobFromTempBasals(List<TempBasal> tempBasalList) {
@@ -348,9 +367,8 @@ public class MainActivity extends Activity
         treatmentList = loadTreatments();
         IobCalc.Iob iobNum = getIobFromTreatments(treatmentList);
 
-        iob.setText(
-                "IOB: " + formatNumber1place.format(iobNum.iobContrib) + " "
-                        + formatNumber1place.format(iobNum.activityContrib));
+        iob.setText(formatNumber1place.format(iobNum.iobContrib));
+        iobActivity.setText(formatNumber1place.format(iobNum.activityContrib));
     }
 
     public static IobCalc.Iob getIobOpenAPSFromTreatments(List<Treatment> treatmentList) {
@@ -451,7 +469,9 @@ public class MainActivity extends Activity
                 } else {
                     linearBolusing.setVisibility(LinearLayout.VISIBLE);
                     bolusingStatus.setText(ev.sStatus);
-                    ev.sendToNSClient();
+                    // Do not send "Delivering X.XU statuses
+                    if (ev.sStatus.indexOf("Delivering") < 0)
+                        ev.sendToNSClient();
                 }
             }
         });
@@ -504,10 +524,20 @@ public class MainActivity extends Activity
     }
 
     private void updateOpenAPSStatus() {
-        LowSuspendStatus lowSuspendStatusRef = LowSuspendStatus.getInstance();
-        lowSuspendData.setText(lowSuspendStatusRef.dataText);
-        openApsStatus.setText(lowSuspendStatusRef.openApsText);
-        lowSuspendStatus.setText(lowSuspendStatusRef.statusText);
+        SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(MainApp.instance().getApplicationContext());
+        String units = SP.getString("ns_units", "mg/dL");
+
+        LowSuspendStatus lowSuspendStatus = LowSuspendStatus.getInstance();
+        bgTime.setText(formatDateToJustTime.format(lowSuspendStatus.time));
+        bgValue.setText(fromMgdltoString(lowSuspendStatus.bg.doubleValue(), units));
+        bgDelta.setText(fromMgdltoString(lowSuspendStatus.delta.doubleValue(), units));
+        bgDeltaAvg15m.setText(fromMgdltoString(lowSuspendStatus.deltaAvg15m, units));
+        bgDeltaAvg30m.setText(fromMgdltoString(lowSuspendStatus.deltaAvg15m, units));
+        bgAvg15m.setText(fromMgdltoString(lowSuspendStatus.avg15m, units));
+        bgAvg30m.setText(fromMgdltoString(lowSuspendStatus.avg30m, units));
+        openApsStatus.setText(lowSuspendStatus.openApsText);
+        lowSuspend.setText(lowSuspendStatus.lowSuspenResult.low ? "{fa-exclamation-triangle}" : "{fa-check}");
+        lowSuspendProjected.setText(lowSuspendStatus.lowSuspenResult.lowProjected ? "{fa-exclamation-triangle}" : "{fa-check}");
     }
 
     @Override
@@ -526,8 +556,10 @@ public class MainActivity extends Activity
                     t.sendToNSClient();
                     bolusStopButtonPressed = false;
                     BolusingEvent be = BolusingEvent.getInstance();
-                    be.sStatus = "Connecting";
-                    MainApp.bus().post(be);
+                    if (t.carbs > 0d) {
+                        be.sStatus = "Connecting";
+                        MainApp.bus().post(be);
+                    }
                     synchronized (t) {
                         t.wait(2000);
                     }
@@ -552,6 +584,9 @@ public class MainActivity extends Activity
                         if (bolusStopButtonPressed) {
                             updated.insulin = 0d;
                             MainApp.instance().getDbHelper().getDaoTreatments().update(updated);
+                            if (updated._id == null || updated._id.equals("")) {
+                                updated.updateToNSClient();
+                            }
                         }
                         dc.bolus(insulin, _id);
                     }
@@ -666,6 +701,11 @@ public class MainActivity extends Activity
 
             return true;
         }
+    }
+
+    private String fromMgdltoString (Double value, String units) {
+        if (units.equals("mg/dL")) return Integer.toString(value.intValue());
+        else return mmolFormat.format(value / 18);
     }
 
 }

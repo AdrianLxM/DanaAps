@@ -50,9 +50,10 @@ public class TreatmentDialogFragment extends DialogFragment implements OnClickLi
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.treatmentDialogDeliverButton:
-
-                Double insulin = Double.parseDouble(this.insulin.getText().toString());
-                Double carbs = Double.parseDouble(this.carbs.getText().toString());
+                String insulinText = this.insulin.getText().toString();
+                String carbsText = this.carbs.getText().toString();
+                Double insulin = Double.parseDouble(!insulinText.equals("") ? this.insulin.getText().toString() : "0");
+                Double carbs = Double.parseDouble(!carbsText.equals("") ? this.carbs.getText().toString() : "0");
                 if(insulin > 3) {
                     this.insulin.setText("");
                 } else if(carbs > 48) {

@@ -803,17 +803,23 @@ public class DanaConnection {
     }
 
     public void updateBasalsInPump() {
-        SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(MainApp.instance().getApplicationContext());
-        final boolean syncBasal = SP.getBoolean("ns_sync_profile", false);
-        if (syncBasal && MainApp.getNSProfile() != null) {
-            double[] basal = buildDanaRProfileRecord(MainApp.getNSProfile());
-            connectIfNotConnected("updateBasalsInPump");
-            MsgSetBasalProfile msgSet = new MsgSetBasalProfile((byte) 0, basal);
-            mSerialEngine.sendMessage(msgSet);
-            MsgSetActivateBasalProfile msgActivate = new MsgSetActivateBasalProfile((byte) 0);
-            mSerialEngine.sendMessage(msgActivate);
-            pingStatus();
-        }
+        Thread setBasal = new Thread () {
+            @Override
+            public void run() {
+                SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(MainApp.instance().getApplicationContext());
+                final String syncBasal = SP.getString("ns_sync_profile", "None");
+                if (syncBasal.equals("NS -> Pump") && MainApp.getNSProfile() != null) {
+                    double[] basal = buildDanaRProfileRecord(MainApp.getNSProfile());
+                    connectIfNotConnected("updateBasalsInPump");
+                    MsgSetBasalProfile msgSet = new MsgSetBasalProfile((byte) 0, basal);
+                    mSerialEngine.sendMessage(msgSet);
+                    MsgSetActivateBasalProfile msgActivate = new MsgSetActivateBasalProfile((byte) 0);
+                    mSerialEngine.sendMessage(msgActivate);
+                    pingStatus();
+                }
+            }
+        };
+        setBasal.start();
     }
 
     public double[] buildDanaRProfileRecord (NSProfile nsProfile) {
@@ -890,13 +896,10 @@ public class DanaConnection {
     }
 
     public void waitMsec(long msecs) {
-        Object o = new Object();
-        synchronized (o) {
-            try {
-                o.wait(msecs);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+        try {
+            Thread.sleep(msecs);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 }

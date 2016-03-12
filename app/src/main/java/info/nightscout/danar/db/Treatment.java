@@ -107,5 +107,32 @@ public class Treatment {
         } else log.debug("DBADD dbAdd " + q.size() + " receivers " + data.toString());
     }
 
+    public void updateToNSClient() {
+        Context context = MainApp.instance().getApplicationContext();
+        Bundle bundle = new Bundle();
+        bundle.putString("action", "dbUpdate");
+        bundle.putString("collection", "treatments");
+        JSONObject data = new JSONObject();
+        try {
+            data.put("eventType", "Meal Bolus");
+            data.put("insulin", insulin);
+            data.put("carbs", carbs.intValue());
+            data.put("created_at", DateUtil.toISOString(created_at));
+            data.put("timeIndex", timeIndex);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        bundle.putString("data", data.toString());
+        bundle.putString("_id", _id);
+        Intent intent = new Intent(Intents.ACTION_DATABASE);
+        intent.putExtras(bundle);
+        intent.addFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
+        context.sendBroadcast(intent);
+        List<ResolveInfo> q = context.getPackageManager().queryBroadcastReceivers(intent, 0);
+        if (q.size() < 1) {
+            log.error("DBUPDATE No receivers");
+        } else log.debug("DBUPDATE dbUpdate " + q.size() + " receivers " + _id + " " + data.toString());
+    }
+
 
 }

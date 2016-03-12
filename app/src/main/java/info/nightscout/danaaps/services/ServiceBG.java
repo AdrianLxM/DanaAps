@@ -19,6 +19,7 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import info.nightscout.danaaps.AppExpire;
 import info.nightscout.danaaps.DeviceStatus;
 import info.nightscout.danar.DanaConnection;
 import info.nightscout.danaaps.MainActivity;
@@ -50,6 +51,9 @@ public class ServiceBG extends android.app.IntentService {
         if (intent == null)
             return;
 
+        if (AppExpire.isExpired())
+            return;
+
         try {
             Bundle bundle = intent.getExtras();
             Date time =  new Date(bundle.getLong("time"));
@@ -71,7 +75,13 @@ public class ServiceBG extends android.app.IntentService {
 
 
             LowSuspendStatus lowSuspendStatus = LowSuspendStatus.getInstance();
-            lowSuspendStatus.dataText = msgReceived;
+            lowSuspendStatus.bg = glucoseValue;
+            lowSuspendStatus.time = time;
+            lowSuspendStatus.delta = delta;
+            lowSuspendStatus.deltaAvg15m = deltaAvg15min;
+            lowSuspendStatus.deltaAvg30m = deltaAvg30min;
+            lowSuspendStatus.avg15m = avg15min;
+            lowSuspendStatus.avg30m = avg30min;
 
             StatusEvent statusEvent = StatusEvent.getInstance();
             DanaConnection danaConnection = getDanaConnection();
@@ -116,7 +126,7 @@ public class ServiceBG extends android.app.IntentService {
                 log.debug("No profile received. Skipping OpenAPS");
                 lowSuspendStatus.openApsText = "No profile";
             } else {
-                determineBasalResult = openAps(glucoseValue, delta, deltaAvg15min, msgReceived, statusEvent, lowSuspendStatus, iobParam);
+                determineBasalResult = openAps(glucoseValue, delta, deltaAvg15min, statusEvent, lowSuspendStatus, iobParam);
                 if (openAPSenabled) {
                     if (determineBasalResult.tempBasalRate == -1) {
                         percent = statusEvent.tempBasalRatio == -1 ? 100 : statusEvent.tempBasalRatio;
@@ -217,7 +227,7 @@ public class ServiceBG extends android.app.IntentService {
 
     }
 
-    private DatermineBasalResult openAps(int glucoseValue, int delta, double deltaAvg15min, String msgReceived, StatusEvent status, LowSuspendStatus lowSuspendStatus, IobParam iobParam) {
+    private DatermineBasalResult openAps(int glucoseValue, int delta, double deltaAvg15min, StatusEvent status, LowSuspendStatus lowSuspendStatus, IobParam iobParam) {
         DetermineBasalAdapterJS determineBasalAdapterJS = null;
         try {
             determineBasalAdapterJS = new DetermineBasalAdapterJS(new ScriptReader(MainApp.instance().getBaseContext()));
@@ -238,7 +248,7 @@ public class ServiceBG extends android.app.IntentService {
         if(tempBasalRemainMin>30) {
             tempBasalRemainMin = 30;
         }
-        determineBasalAdapterJS.setCurrentTemp(tempBasalRemainMin,tempBasalRatioAbsolute);
+        determineBasalAdapterJS.setCurrentTemp(tempBasalRemainMin, tempBasalRatioAbsolute);
 
         DatermineBasalResult determineBasalResult = determineBasalAdapterJS.invoke();
 
@@ -270,14 +280,9 @@ public class ServiceBG extends android.app.IntentService {
         LowSuspendResult lowSuspendResult = new LowSuspendResult();
 
         lowSuspendResult.lowProjected = (glucoseValue + 6.0*deltaAvg15min) <90;
-        //boolean nearLowAndDropping = false; //glucoseValue < 130 && deltaAvg15min <= -1.5;
         lowSuspendResult.low = glucoseValue < 90;
 
-        String rulesText =
-                //"n130Dropping: " + nearLowAndDropping +
-                " Low: " + lowSuspendResult.low +
-                " LowProjected:" + lowSuspendResult.lowProjected;
-        LowSuspendStatus.getInstance().statusText = rulesText;
+        LowSuspendStatus.getInstance().lowSuspenResult = lowSuspendResult;
 
         if(lowSuspendResult.low) {
             lowSuspendResult.percent = 0;
@@ -313,4 +318,5 @@ public class ServiceBG extends android.app.IntentService {
         }
         return danaConnection;
     }
+
 }
