@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/DanaAppwithNS.iml" filepath="$PROJECT_DIR$/DanaAppwithNS.iml" />
+      <module fileurl="file://$PROJECT_DIR$/DanaAPS.iml" filepath="$PROJECT_DIR$/DanaAPS.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>

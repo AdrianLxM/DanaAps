@@ -71,26 +71,24 @@ public class SerialEngine extends Thread {
                             responseMessageBytes = new byte[length];
 
                             if (readBuff.length < length) {
-                                continue;
+                                break;
                             }
 
-                            if (readBuff[length - 3] == (byte) 0x2e && readBuff[length - 2] == (byte) 0x2e) {
+                            if (readBuff[length - 2] != (byte) 0x2e || readBuff[length - 1] != (byte) 0x2e) {
                                 log.error("err lenght="+length+" data "+toHexString(readBuff));
                             }
 
-                            {
-                                short crc = CRC.getCrc16(readBuff, 3, length - 7);
-                                byte crcByte0 = (byte) (crc >> 8 & (int) 0xFF);
-                                byte crcByte1 = (byte) (crc & (int) 0xFF);
+                            short crc = CRC.getCrc16(readBuff, 3, length - 7);
+                            byte crcByte0 = (byte) (crc >> 8 & (int) 0xFF);
+                            byte crcByte1 = (byte) (crc & (int) 0xFF);
 
-                                byte crcByte0received = readBuff[length - 4];
-                                byte crcByte1received = readBuff[length - 3];
+                            byte crcByte0received = readBuff[length - 4];
+                            byte crcByte1received = readBuff[length - 3];
 
-                                if (crcByte0 == crcByte0received && crcByte1 == crcByte1received) {
+                            if (crcByte0 == crcByte0received && crcByte1 == crcByte1received) {
 
-                                } else {
-                                    log.error("CRC Error" + String.format("%02x ", crcByte0) + String.format("%02x ", crcByte1) + String.format("%02x ", crcByte0received) + String.format("%02x ", crcByte1received));
-                                }
+                            } else {
+                                log.error("CRC Error" + String.format("%02x ", crcByte0) + String.format("%02x ", crcByte1) + String.format("%02x ", crcByte0received) + String.format("%02x ", crcByte1received));
                             }
 
 
