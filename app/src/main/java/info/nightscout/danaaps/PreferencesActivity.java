@@ -32,6 +32,7 @@ public class PreferencesActivity extends PreferenceActivity implements SharedPre
             addPreferencesFromResource(R.xml.pref_units);
             addPreferencesFromResource(R.xml.pref_sync);
             addPreferencesFromResource(R.xml.pref_openaps);
+            addPreferencesFromResource(R.xml.pref_safety);
         }
     }
 

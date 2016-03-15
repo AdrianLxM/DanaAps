@@ -17,7 +17,9 @@ import java.util.Date;
 import java.util.List;
 
 import info.nightscout.client.broadcasts.Intents;
+import info.nightscout.client.data.NSProfile;
 import info.nightscout.danaaps.MainApp;
+import info.nightscout.danaaps.calc.CarbCalc;
 import info.nightscout.danaaps.calc.IobCalc;
 import info.nightscout.utils.DateUtil;
 

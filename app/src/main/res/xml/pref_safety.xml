@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:key="safety"
+        android:title="@string/safety_title">
+
+        <EditTextPreference
+            android:title="@string/safety_maxbolus_title"
+            android:key="safety_maxbolus"
+            android:defaultValue="3"
+            android:inputType="numberDecimal">
+        </EditTextPreference>
+        <EditTextPreference
+            android:title="@string/safety_maxcarbs_title"
+            android:key="safety_maxcarbs"
+            android:defaultValue="48"
+            android:inputType="numberDecimal">
+        </EditTextPreference>
+    </PreferenceCategory>
+</PreferenceScreen>

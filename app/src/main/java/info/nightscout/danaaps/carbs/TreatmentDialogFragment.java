@@ -2,11 +2,15 @@ package info.nightscout.danaaps.carbs;
 
 import android.app.Activity;
 import android.app.DialogFragment;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.*;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
+
+import info.nightscout.danaaps.MainApp;
 import info.nightscout.danaaps.R;
 
 public class TreatmentDialogFragment extends DialogFragment implements OnClickListener {
@@ -50,13 +54,18 @@ public class TreatmentDialogFragment extends DialogFragment implements OnClickLi
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.treatmentDialogDeliverButton:
+                SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(MainApp.instance().getApplicationContext());
+                Double maxbolus = (double) SP.getFloat("safety_maxbolus", 3);
+                Double maxcarbs = (double) SP.getFloat("safety_maxcarbs", 48);
+
+
                 String insulinText = this.insulin.getText().toString();
                 String carbsText = this.carbs.getText().toString();
                 Double insulin = Double.parseDouble(!insulinText.equals("") ? this.insulin.getText().toString() : "0");
                 Double carbs = Double.parseDouble(!carbsText.equals("") ? this.carbs.getText().toString() : "0");
-                if(insulin > 3) {
+                if(insulin > maxbolus) {
                     this.insulin.setText("");
-                } else if(carbs > 48) {
+                } else if(carbs > maxcarbs) {
                     this.carbs.setText("");
                 } else if (insulin > 0d || carbs > 0d){
                     dismiss();

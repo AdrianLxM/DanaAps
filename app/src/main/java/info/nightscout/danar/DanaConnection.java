@@ -796,10 +796,13 @@ public class DanaConnection {
     }
 
     public void carbsEntry(int amount) {
-        Calendar time = Calendar.getInstance();
-        MsgCarbsEntry msg = new MsgCarbsEntry(time, amount);
-        mSerialEngine.sendMessage(msg);
-        //pingStatus();
+        if (isVirtualPump()) {
+        } else {
+            Calendar time = Calendar.getInstance();
+            MsgCarbsEntry msg = new MsgCarbsEntry(time, amount);
+            mSerialEngine.sendMessage(msg);
+            //pingStatus();
+        }
     }
 
     public void updateBasalsInPump() {

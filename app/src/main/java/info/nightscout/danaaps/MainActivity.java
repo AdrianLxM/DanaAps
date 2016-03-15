@@ -24,6 +24,8 @@ import com.joanzapata.iconify.Iconify;
 import com.joanzapata.iconify.fonts.FontAwesomeModule;
 import com.squareup.otto.Subscribe;
 
+import info.nightscout.client.data.NSProfile;
+import info.nightscout.danaaps.calc.CarbCalc;
 import info.nightscout.danaaps.calc.IobCalc;
 import info.nightscout.danaaps.carbs.TreatmentDialogFragment;
 import info.nightscout.client.receivers.NSClientDataReceiver;
@@ -59,6 +61,7 @@ public class MainActivity extends Activity
     private static Logger log = LoggerFactory.getLogger(MainActivity.class);
 
     private static DecimalFormat format2digits = new DecimalFormat("00");
+    private static DecimalFormat format1digit = new DecimalFormat("0");
     private static DecimalFormat formatNumber1place = new DecimalFormat("0.00");
     private static DateFormat formatDateToJustTime = new SimpleDateFormat("HH:mm");
     public static final DecimalFormat mmolFormat = new DecimalFormat("0.0");
@@ -83,6 +86,8 @@ public class MainActivity extends Activity
     TextView basalIob;
     TextView iobActivity;
     TextView basalIobActivity;
+    TextView mealAssistCarbs;
+    TextView mealAssistBoluses;
     TextView connection;
 
     private TextView bgTime;
@@ -174,6 +179,8 @@ public class MainActivity extends Activity
         basalIob = (TextView) findViewById(R.id.basal_iob);
         iobActivity = (TextView) findViewById(R.id.iobActivity);
         basalIobActivity = (TextView) findViewById(R.id.basal_iobActivity);
+        mealAssistCarbs  = (TextView) findViewById(R.id.mealAssist_carbs);
+        mealAssistBoluses  = (TextView) findViewById(R.id.mealAssist_boluses);
 
         uRemaining = (TextView) findViewById(R.id.uRemaining);
         batteryStatus = (TextView) findViewById(R.id.batteryStatus);
@@ -396,9 +403,28 @@ public class MainActivity extends Activity
             if(treatment.getMsAgo()>48*60*60_000) {
                 treatmentIterator.remove();
             }
-            iob= calcIob.plus(iob);
+            iob = calcIob.plus(iob);
         }
         return iob;
+    }
+
+    private void updateMealAssist() {
+        List<Treatment> treatmentList = null;
+
+        treatmentList = loadTreatments();
+        CarbCalc.Meal meal = getCarbsFromTreatments(treatmentList);
+
+        mealAssistCarbs.setText(format1digit.format(meal.carbs));
+        mealAssistBoluses.setText(formatNumber1place.format(meal.boluses));
+    }
+
+    public static CarbCalc.Meal getCarbsFromTreatments(List<Treatment> treatmentList) {
+        NSProfile profile = MainApp.getNSProfile();
+        if (profile != null) {
+            CarbCalc calc = new CarbCalc(profile, treatmentList);
+            CarbCalc.Meal meal = calc.invoke(new Date());
+            return meal;
+        } else return new CarbCalc.Meal();
     }
 
     public static List<Treatment> loadTreatments() {
@@ -515,6 +541,7 @@ public class MainActivity extends Activity
                 updateOpenAPSStatus();
                 updateTempBasalIOB();
                 updateTreatmentsIOB();
+                updateMealAssist();
             }
         });
     }

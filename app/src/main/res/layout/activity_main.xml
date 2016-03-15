@@ -691,6 +691,52 @@
                     android:textSize="20dp"/>
 
             </LinearLayout>
+
+            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Meal assist: Carbs:"
+                    android:textSize="16dp"
+                    android:layout_weight="3"
+                    android:layout_gravity="center_vertical"
+                    android:textColor="#bdbdbd"
+                    android:layout_marginRight="5dp" />
+
+                <TextView
+                    android:id="@+id/mealAssist_carbs"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:layout_weight="3"
+                    android:gravity="center_vertical"
+                    android:textSize="20dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Boluses:"
+                    android:textSize="16dp"
+                    android:layout_gravity="center_vertical"
+                    android:textColor="#bdbdbd"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp" />
+
+                <TextView
+                    android:id="@+id/mealAssist_boluses"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:layout_weight="3"
+                    android:gravity="center_vertical"
+                    android:textSize="20dp"/>
+
+            </LinearLayout>
         </LinearLayout>
 
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
