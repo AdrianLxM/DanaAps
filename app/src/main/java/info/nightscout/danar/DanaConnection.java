@@ -30,6 +30,7 @@ import info.nightscout.danar.comm.*;
 import info.nightscout.danar.db.Bolus;
 import info.nightscout.danar.db.PumpStatus;
 import info.nightscout.danar.db.TempBasal;
+import info.nightscout.danar.db.Treatment;
 import info.nightscout.danar.event.BolusingEvent;
 import info.nightscout.danar.event.ConnectionStatusEvent;
 
@@ -64,7 +65,7 @@ public class DanaConnection {
     private BluetoothDevice mDevice;
     private boolean connectionEnabled = false;
     PowerManager.WakeLock mWakeLock;
-    private String bolusingId = null;
+    private Treatment bolusingTreatment = null;
 
     private static final UUID SPP_UUID = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb");
 
@@ -173,6 +174,7 @@ public class DanaConnection {
                     alarmServiceIntent.putExtra("alarmText","Connection error");
                     MainApp.instance().getApplicationContext().startService(alarmServiceIntent);
                 }
+                waitMsec(1000);
             }
             log.debug("connectIfNotConnected took " + timeToConnectTimeSoFar + "s attempts:" + connectionAttemptCount);
         } else {
@@ -253,7 +255,7 @@ public class DanaConnection {
                 VirtualPump vp = VirtualPump.getInstance();
                 statusEvent.remainUnits = vp.remainUnits;
                 statusEvent.remainBattery = vp.remainBattery;
-                statusEvent.currentBasal = vp.currentBasal;
+                statusEvent.currentBasal = vp.nsProfile == null ? 0.2 : vp.nsProfile.getBasal(vp.nsProfile.minutesFromMidnight());
                 statusEvent.last_bolus_amount = vp.last_bolus_amount;
                 statusEvent.last_bolus_time = vp.last_bolus_time;
                 statusEvent.time = new Date();
@@ -419,7 +421,7 @@ public class DanaConnection {
         try {mRfcommSocket.close();} catch (Exception e) {log.debug(e.getMessage());}
         if(mSerialEngine!=null) mSerialEngine.stopIt();
     }
-
+/*
     public Result setTempBasalFromHAPP(final Basal basal) {
         final SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(MainApp.instance().getApplicationContext());
         final Result result = new Result();
@@ -718,7 +720,7 @@ public class DanaConnection {
         mBus.post(bolusingEvent);
         return result;
     }
-
+*/
     public void extendedBolus(final double amount, final byte durationInHalfHours) throws Exception {
         Thread temp = new Thread() {
             public void run() {
@@ -743,53 +745,44 @@ public class DanaConnection {
         temp.start();
     }
 
-    public void bolus(Double amount, String _id)  {
+    public void bolus(Double amount, Treatment t)  {
         if (isVirtualPump()) {
             VirtualPump vp = VirtualPump.getInstance();
             vp.last_bolus_amount = amount;
             vp.last_bolus_time = new Date();
         } else {
-            bolusingId = _id;
-            MainApp.instance().lastBolusingEvent = "";
-            MsgBolusStart msg = new MsgBolusStart(amount, _id);
-            MsgBolusProgress progress = new MsgBolusProgress(MainApp.bus(), amount, _id);
-            MsgBolusStop stop = new MsgBolusStop(MainApp.bus(), _id);
+            bolusingTreatment = t;
+            MsgBolusStart msg = new MsgBolusStart(amount);
+            MsgBolusProgress progress = new MsgBolusProgress(MainApp.bus(), amount, t);
+            MsgBolusStop stop = new MsgBolusStop(MainApp.bus(), amount, t);
 
             mSerialEngine.expectMessage(progress);
             mSerialEngine.expectMessage(stop);
 
             mSerialEngine.sendMessage(msg);
             while (!stop.stopped) {
-                mSerialEngine.expectMessage(progress);
+                waitMsec(50);
             }
         }
-        bolusingId = null;
+        bolusingTreatment = null;
         pingStatus();
-        waitMsec(2000);
-        BolusingEvent be = BolusingEvent.getInstance();
-        be.sStatus = "";
-        mBus.post(be);
     }
 
     public void bolusStop()  {
-        log.debug("bolusStop >>>>> @" + MainApp.instance().lastBolusingEvent);
-        String lastBolusingEvent = MainApp.instance().lastBolusingEvent;
-        String lastBolusingId = bolusingId;
+        Treatment lastBolusingTreatment = bolusingTreatment;
+        log.debug("bolusStop >>>>> @ " + (bolusingTreatment == null ? "" : bolusingTreatment.insulin));
         if (isVirtualPump()) {
         } else {
-            MsgBolusStop stop = new MsgBolusStop(MainApp.bus(), bolusingId == null ? "" : bolusingId);
+            MsgBolusStop stop = new MsgBolusStop();
+            stop.forced = true;
             mSerialEngine.sendMessage(stop);
             while (!stop.stopped) {
                 mSerialEngine.sendMessage(stop);
+                waitMsec(200);
             }
-            // Wait for processing all bolus events
-            waitMsec(5000);
             // and update ns status to last amount
-            BolusingEvent be = BolusingEvent.getInstance();
-            be.sStatus = lastBolusingEvent.replace("Delivering ", "") + " ONLY";
-            be._id = lastBolusingId;
-            mBus.post(BolusingEvent.getInstance());
             waitMsec(60000);
+            BolusingEvent be = BolusingEvent.getInstance();
             be.sStatus = "";
             mBus.post(be);
         }
@@ -806,23 +799,27 @@ public class DanaConnection {
     }
 
     public void updateBasalsInPump() {
-        Thread setBasal = new Thread () {
-            @Override
-            public void run() {
-                SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(MainApp.instance().getApplicationContext());
-                final String syncBasal = SP.getString("ns_sync_profile", "None");
-                if (syncBasal.equals("NS -> Pump") && MainApp.getNSProfile() != null) {
-                    double[] basal = buildDanaRProfileRecord(MainApp.getNSProfile());
-                    connectIfNotConnected("updateBasalsInPump");
-                    MsgSetBasalProfile msgSet = new MsgSetBasalProfile((byte) 0, basal);
-                    mSerialEngine.sendMessage(msgSet);
-                    MsgSetActivateBasalProfile msgActivate = new MsgSetActivateBasalProfile((byte) 0);
-                    mSerialEngine.sendMessage(msgActivate);
-                    pingStatus();
+        if (isVirtualPump()) {
+            VirtualPump.getInstance().nsProfile = MainApp.getNSProfile();
+        } else {
+            Thread setBasal = new Thread() {
+                @Override
+                public void run() {
+                    SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(MainApp.instance().getApplicationContext());
+                    final String syncBasal = SP.getString("ns_sync_profile", "None");
+                    if (syncBasal.equals("NS -> Pump") && MainApp.getNSProfile() != null) {
+                        double[] basal = buildDanaRProfileRecord(MainApp.getNSProfile());
+                        connectIfNotConnected("updateBasalsInPump");
+                        MsgSetBasalProfile msgSet = new MsgSetBasalProfile((byte) 0, basal);
+                        mSerialEngine.sendMessage(msgSet);
+                        MsgSetActivateBasalProfile msgActivate = new MsgSetActivateBasalProfile((byte) 0);
+                        mSerialEngine.sendMessage(msgActivate);
+                        pingStatus();
+                    }
                 }
-            }
-        };
-        setBasal.start();
+            };
+            setBasal.start();
+        }
     }
 
     public double[] buildDanaRProfileRecord (NSProfile nsProfile) {

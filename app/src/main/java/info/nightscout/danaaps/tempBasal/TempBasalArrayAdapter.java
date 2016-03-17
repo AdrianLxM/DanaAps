@@ -9,7 +9,7 @@ import android.widget.TextView;
 
 import info.nightscout.danaaps.MainApp;
 import info.nightscout.danaaps.R;
-import info.nightscout.danaaps.calc.IobCalc;
+import info.nightscout.danaaps.calc.Iob;
 import info.nightscout.danar.db.TempBasal;
 
 import java.text.DateFormat;
@@ -91,7 +91,7 @@ public class TempBasalArrayAdapter extends ArrayAdapter<TempBasal> {
         );
 
         Double sens = MainApp.getNSProfile() != null ? MainApp.getNSProfile().getIsf(MainApp.getNSProfile().minutesFromMidnight()) : 0;
-        IobCalc.Iob iob = tempBasal.calcIob();
+        Iob iob = tempBasal.calcIob();
         holder.tempBasal_iob.setText(formatNumber2place.format(iob.iobContrib)
             + " " + formatNumber2place.format(iob.activityContrib*sens));
         return view;

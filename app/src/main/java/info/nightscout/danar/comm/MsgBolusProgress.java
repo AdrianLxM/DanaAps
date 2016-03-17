@@ -2,6 +2,7 @@ package info.nightscout.danar.comm;
 
 import com.squareup.otto.Bus;
 
+import info.nightscout.danar.db.Treatment;
 import info.nightscout.danar.event.BolusingEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,8 +14,8 @@ public class MsgBolusProgress extends DanaRMessage {
     public static final DecimalFormat bolusNumberFormat = new DecimalFormat("0.0");
     private static Bus bus = null;
 
-    private String _id;
-    private double amount;
+    private static Treatment t;
+    private static double amount;
 
     public int progress = -1;
 
@@ -29,21 +30,24 @@ public class MsgBolusProgress extends DanaRMessage {
     }
 
 
-    public MsgBolusProgress(Bus bus, double amount, String _id) {
+    public MsgBolusProgress(Bus bus, double amount, Treatment t) {
         this();
         this.amount = amount;
-        this. _id = _id;
+        this.t = t;
         this.bus = bus;
     }
 
     public void handleMessage(byte[] bytes) {
         progress = DanaRMessages.byteArrayToInt(bytes, 0, 2);
-        log.debug("remaining "+progress);
 //        bolusUI.bolusDeliveredAmountSoFar = progress/100d;
 //        bolusUI.bolusDelivering();
+        Double done = (amount * 100 - progress) / 100d;
+        t.insulin = done;
         BolusingEvent bolusingEvent = BolusingEvent.getInstance();
-        bolusingEvent.sStatus = "Delivering " + bolusNumberFormat.format((amount * 100 - progress) / 100d) + "U";
-        bolusingEvent._id = _id;
+        bolusingEvent.sStatus = "Delivering " + bolusNumberFormat.format(done) + "U";
+        bolusingEvent.t = t;
+        log.debug("remaining: " + progress + " delivered: " + done);
+
         bus.post(bolusingEvent);
     }
 

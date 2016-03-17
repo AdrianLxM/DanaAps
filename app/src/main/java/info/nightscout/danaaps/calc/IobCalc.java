@@ -9,17 +9,6 @@ import java.util.Date;
 
 public class IobCalc {
 
-    public static class Iob {
-        public double iobContrib = 0;
-        public double activityContrib = 0;
-
-        public Iob plus(Iob iob) {
-            iobContrib += iob.iobContrib;
-            activityContrib += iob.activityContrib;
-            return this;
-        }
-    }
-
     private static Logger log = LoggerFactory.getLogger(IobCalc.class);
     private Date timeStart;
     private double amount;

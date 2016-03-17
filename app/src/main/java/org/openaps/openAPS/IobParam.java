@@ -9,12 +9,27 @@ import org.json.JSONObject;
 public class IobParam {
     public Double iob;
     public Double activity;
-    public Double bolusIob;
+    public Double bolussnooze;
+    public Double basaliob;
+    public Double netbasalinsulin;
+    public Double hightempinsulin;
 
-    public IobParam (Double iob, Double activity, Double bolusIob) {
+    public IobParam (Double iob, Double activity, Double bolussnooze) {
         this.iob = iob;
         this.activity = activity;
-        this.bolusIob = bolusIob;
+        this.bolussnooze = bolussnooze;
+        this.basaliob = 0d;
+        this.netbasalinsulin = 0d;
+        this.hightempinsulin = 0d;
+    }
+
+    public IobParam (Double iob, Double activity, Double bolussnooze, Double basaliob, Double netbasalinsulin, Double hightempinsulin) {
+        this.iob = iob;
+        this.activity = activity;
+        this.bolussnooze = bolussnooze;
+        this.basaliob = basaliob;
+        this.netbasalinsulin = netbasalinsulin;
+        this.hightempinsulin = hightempinsulin;
     }
 
     public JSONObject json() {
@@ -22,7 +37,7 @@ public class IobParam {
         try {
             json.put("iob", iob);
             json.put("activity", activity);
-            json.put("bolusIob", bolusIob);
+            json.put("bolusIob", bolussnooze);
         } catch (JSONException e) {
             e.printStackTrace();
         }

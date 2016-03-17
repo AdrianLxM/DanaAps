@@ -14,6 +14,7 @@ import java.util.List;
 
 import info.nightscout.client.broadcasts.Intents;
 import info.nightscout.danaaps.MainApp;
+import info.nightscout.danar.db.Treatment;
 
 /**
  * Created by mike on 05.02.2016.
@@ -21,7 +22,7 @@ import info.nightscout.danaaps.MainApp;
 public class BolusingEvent {
     private static Logger log = LoggerFactory.getLogger(BolusingEvent.class);
     public String sStatus = "";
-    public String _id = "";
+    public Treatment t = null;
     private static BolusingEvent bolusingEvent = null;
 
     public BolusingEvent(String status) {
@@ -39,7 +40,7 @@ public class BolusingEvent {
     }
 
     public void sendToNSClient() {
-        if (_id == null || _id.equals("")) return;
+        if (t == null || t._id == null || t._id.equals("")) return;
         Context context = MainApp.instance().getApplicationContext();
         Bundle bundle = new Bundle();
         bundle.putString("action", "dbUpdate");
@@ -51,7 +52,7 @@ public class BolusingEvent {
             e.printStackTrace();
         }
         bundle.putString("data", data.toString());
-        bundle.putString("_id", _id);
+        bundle.putString("_id", t._id);
         Intent intent = new Intent(Intents.ACTION_DATABASE);
         intent.putExtras(bundle);
         intent.addFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
@@ -59,7 +60,7 @@ public class BolusingEvent {
         List<ResolveInfo> q = context.getPackageManager().queryBroadcastReceivers(intent, 0);
         if (q.size() < 1) {
             log.error("DBUPDATE No receivers");
-        } else log.debug("DBUPDATE dbUpdate " + q.size() + " receivers " + _id + " " + data.toString());
+        } else log.debug("DBUPDATE dbUpdate " + q.size() + " receivers " + t._id + " " + data.toString());
     }
 
 }

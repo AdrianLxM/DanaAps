@@ -32,8 +32,6 @@ public class MainApp  extends Application {
     private static DatabaseHelper databaseHelper = null;
     private static DanaConnection sDanaConnection = null;
 
-    public static String lastBolusingEvent = "";
-
     @Override
     public void onCreate() {
         super.onCreate();

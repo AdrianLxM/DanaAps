@@ -26,7 +26,7 @@ import com.squareup.otto.Subscribe;
 
 import info.nightscout.client.data.NSProfile;
 import info.nightscout.danaaps.calc.CarbCalc;
-import info.nightscout.danaaps.calc.IobCalc;
+import info.nightscout.danaaps.calc.Iob;
 import info.nightscout.danaaps.carbs.TreatmentDialogFragment;
 import info.nightscout.client.receivers.NSClientDataReceiver;
 import info.nightscout.danar.DanaConnection;
@@ -37,6 +37,7 @@ import info.nightscout.danar.event.BolusingEvent;
 import info.nightscout.danar.event.ConnectionStatusEvent;
 import info.nightscout.danar.event.LowSuspendStatus;
 
+import org.openaps.openAPS.IobParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -329,19 +330,19 @@ public class MainActivity extends Activity
     private void updateTempBasalIOB() {
         List<TempBasal> tempBasalList = loadTempBasalsDB();
 
-        IobCalc.Iob iobNum = getIobFromTempBasals(tempBasalList);
+        Iob iobNum = getIobFromTempBasals(tempBasalList);
         Double sens = MainApp.getNSProfile() != null ? MainApp.getNSProfile().getIsf(MainApp.getNSProfile().minutesFromMidnight()) : 0;
         basalIob.setText(formatNumber1place.format(iobNum.iobContrib));
         basalIobActivity.setText(formatNumber1place.format(iobNum.activityContrib * sens));
     }
 
-    public static IobCalc.Iob getIobFromTempBasals(List<TempBasal> tempBasalList) {
-        IobCalc.Iob iob = new IobCalc.Iob();
+    public static Iob getIobFromTempBasals(List<TempBasal> tempBasalList) {
+        Iob iob = new Iob();
 
         Iterator<TempBasal> tempBasalIterator = tempBasalList.iterator();
         while(tempBasalIterator.hasNext()) {
             TempBasal tempBasal = tempBasalIterator.next();
-            IobCalc.Iob calcIob = tempBasal.calcIob();
+            Iob calcIob = tempBasal.calcIob();
             if(tempBasal.getMsAgo()>4*60*60_000) {
 //                tempBasalIterator.remove();
             }
@@ -372,33 +373,33 @@ public class MainActivity extends Activity
         List<Treatment> treatmentList = null;
 
         treatmentList = loadTreatments();
-        IobCalc.Iob iobNum = getIobFromTreatments(treatmentList);
+        Iob iobNum = getIobFromTreatments(treatmentList);
 
         iob.setText(formatNumber1place.format(iobNum.iobContrib));
         iobActivity.setText(formatNumber1place.format(iobNum.activityContrib));
     }
 
-    public static IobCalc.Iob getIobOpenAPSFromTreatments(List<Treatment> treatmentList) {
-        IobCalc.Iob iob= new IobCalc.Iob ();
+    public static Iob getIobOpenAPSFromTreatments(List<Treatment> treatmentList) {
+        Iob iob= new Iob();
         Iterator<Treatment> treatmentIterator = treatmentList.iterator();
         while(treatmentIterator.hasNext()) {
             Treatment treatment = treatmentIterator.next();
-            IobCalc.Iob calcIob = treatment.calcIobOpenAPS();
+            Iob calcIob = treatment.calcIobOpenAPS();
             // remove treatments older than 48h
             if(treatment.getMsAgo()>48*60*60_000) {
                 treatmentIterator.remove();
             }
-            iob= calcIob.plus(iob);
+            iob = calcIob.plus(iob);
         }
         return iob;
     }
 
-    public static IobCalc.Iob getIobFromTreatments(List<Treatment> treatmentList) {
-        IobCalc.Iob iob= new IobCalc.Iob ();
+    public static Iob getIobFromTreatments(List<Treatment> treatmentList) {
+        Iob iob = new Iob();
         Iterator<Treatment> treatmentIterator = treatmentList.iterator();
         while(treatmentIterator.hasNext()) {
             Treatment treatment = treatmentIterator.next();
-            IobCalc.Iob calcIob = treatment.calcIob();
+            Iob calcIob = treatment.calcIob();
             // remove treatments older than 48h
             if(treatment.getMsAgo()>48*60*60_000) {
                 treatmentIterator.remove();
@@ -426,7 +427,63 @@ public class MainActivity extends Activity
             return meal;
         } else return new CarbCalc.Meal();
     }
+/*
+    public IobParam iobTotal(opts) {
+        Date time = new Date();
+        var iobCalc = opts.calculate;
+        NSProfile profile_data = MainApp.getNSProfile();
+        Double iob = 0d;
+        Double bolussnooze = 0d;
+        Double basaliob = 0d;
+        Double activity = 0d;
+        Double netbasalinsulin = 0d;
+        Double hightempinsulin = 0d;
 
+        IobParam result = new IobParam(0d, 0d, 0d, 0d, 0d, 0d);
+
+        List<Treatment> treatmentList = loadTreatments();
+
+        Iterator<Treatment> treatmentIterator = treatmentList.iterator();
+        while(treatmentIterator.hasNext()) {
+            Treatment treatment = treatmentIterator.next();
+            if(treatment.date <= time.getTime( )) {
+                var dia = profile_data.dia;
+                Iob tIOB = iobCalc(treatment, time, dia);
+                if (tIOB && tIOB.iobContrib) iob += tIOB.iobContrib;
+                if (tIOB && tIOB.activityContrib) activity += tIOB.activityContrib;
+                // keep track of bolus IOB separately for snoozes, but decay it twice as fast
+                if (treatment.insulin >= 0.2 && treatment.started_at) {
+                    //use half the dia for double speed bolus snooze
+                    var bIOB = iobCalc(treatment, time, dia / 2);
+                    //console.log(treatment);
+                    //console.log(bIOB);
+                    if (bIOB && bIOB.iobContrib) bolussnooze += bIOB.iobContrib;
+                } else {
+                    var aIOB = iobCalc(treatment, time, dia);
+                    if (aIOB && aIOB.iobContrib) basaliob += aIOB.iobContrib;
+                    if (treatment.insulin) {
+                        now = time.getTime();
+                        var dia_ago = now - profile_data.dia*60*60*1000;
+                        if(treatment.date > dia_ago && treatment.date <= now) {
+                            netbasalinsulin += treatment.insulin;
+                            if (treatment.insulin > 0) {
+                                hightempinsulin += treatment.insulin;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        result.iob = Math.round( iob * 1000d ) / 1000d;
+        result.activity = Math.round( activity * 10000d ) / 10000d;
+        result.bolussnooze = Math.round( bolussnooze * 1000d ) / 1000d;
+        result.basaliob = Math.round( basaliob * 1000d ) / 1000d;
+        result.netbasalinsulin = Math.round( netbasalinsulin * 1000d ) / 1000d;
+        result.hightempinsulin = Math.round( hightempinsulin * 1000d ) / 1000d;
+        return result;
+    }
+*/
     public static List<Treatment> loadTreatments() {
         List<Treatment> treatmentList = null;
         try {
@@ -488,7 +545,6 @@ public class MainActivity extends Activity
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                MainApp.instance().lastBolusingEvent = ev.sStatus;
                 if (ev.sStatus.equals("")) {
                     linearBolusing.setVisibility(LinearLayout.GONE);
                     log.debug("BolusingEvent: hidding Linearlayout");
@@ -579,23 +635,15 @@ public class MainActivity extends Activity
                 t.created_at = new Date();
                 try {
                     MainApp.instance().getDbHelper().getDaoTreatments().create(t);
-                    t.setTimeIndex(t.getTimeIndex());
-                    t.sendToNSClient();
-                    bolusStopButtonPressed = false;
-                    BolusingEvent be = BolusingEvent.getInstance();
-                    if (t.carbs > 0d) {
-                        be.sStatus = "Connecting";
-                        MainApp.bus().post(be);
-                    }
-                    synchronized (t) {
-                        t.wait(2000);
-                    }
                 } catch (SQLException e) {
                     e.printStackTrace();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
                 }
-
+                bolusStopButtonPressed = false;
+                BolusingEvent be = BolusingEvent.getInstance();
+                if (t.carbs > 0d || t.insulin > 0d) {
+                    be.sStatus = "Connecting";
+                    MainApp.bus().post(be);
+                }
 
                 DanaConnection dc = MainApp.getDanaConnection();
                 dc.connectIfNotConnected("treatmentDialogDeliver");
@@ -603,27 +651,23 @@ public class MainActivity extends Activity
                     if (t.carbs > 0d)
                         dc.carbsEntry(carbs.intValue());
                     if (t.insulin > 0d) {
-                        Treatment updated = NSClientDataReceiver.findByTimeIndex(t.getTimeIndex());
-                        String _id = "";
-                        if (updated._id == null || updated._id.equals("")) {
-                            log.debug("treatmentDialogDeliver: updated treatment id not found. Not updating NS site");
-                        } else _id = updated._id;
                         if (bolusStopButtonPressed) {
-                            updated.insulin = 0d;
-                            MainApp.instance().getDbHelper().getDaoTreatments().update(updated);
-                            if (updated._id == null || updated._id.equals("")) {
-                                updated.updateToNSClient();
-                            }
+                            t.insulin = 0d;
+                            MainApp.instance().getDbHelper().getDaoTreatments().update(t);
+                        } else {
+                            dc.bolus(insulin, t);
                         }
-                        dc.bolus(insulin, _id);
                     }
+                    t.setTimeIndex(t.getTimeIndex());
+                    t.sendToNSClient();
+                    dc.waitMsec(2000);
+                    be.sStatus = "";
+                    MainApp.bus().post(be);
                 } catch (Exception e) {
                     log.error(e.getMessage(), e);
                 }
             }
         });
-
-
     }
 
     @Subscribe
@@ -673,6 +717,13 @@ public class MainActivity extends Activity
                     break;
                 }
 
+                case R.id.nav_refreshtreatments: {
+                    MainApp.getDbHelper().resetTreatments();
+                    Intent restartNSClient = new Intent("info.nightscout.client.RESTART");
+                    getApplicationContext().sendBroadcast(restartNSClient);
+                    break;
+                }
+
                 case R.id.nav_backup: {
 
                     try {
@@ -680,7 +731,7 @@ public class MainActivity extends Activity
                         File data = Environment.getDataDirectory();
 
                         if (sd.canWrite()) {
-                            String currentDBPath = "/data/info.nightscout.danaapp/databases/"+ DatabaseHelper.DATABASE_NAME;
+                            String currentDBPath = "/data/info.nightscout.danaaps/databases/"+ DatabaseHelper.DATABASE_NAME;
                             String backupDBPath = DatabaseHelper.DATABASE_NAME;
                             File currentDB = new File(data, currentDBPath);
                             File backupDB = new File(sd, backupDBPath);

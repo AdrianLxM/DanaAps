@@ -159,7 +159,7 @@ public class DetermineBasalAdapterJS {
 
     private void initIobData() {
         mIobData = new V8Object(mV8rt);
-        setIobData(new IobParam(0.0, 0.0, 0.0));
+        setIobData(new IobParam(0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
 
         mV8rt.add(PARAM_iobData, mIobData);
     }
@@ -168,7 +168,11 @@ public class DetermineBasalAdapterJS {
     public void setIobData(IobParam iobParam) {
         mIobData.add("iob", iobParam.iob); //netIob
         mIobData.add("activity", iobParam.activity); //netActivity
-        mIobData.add("bolusiob", iobParam.bolusIob); //bolusIob
+        mIobData.add("bolusiob", iobParam.bolussnooze); // backward compatibility with master
+        mIobData.add("bolussnooze", iobParam.bolussnooze); //bolusIob
+        mIobData.add("basaliob", iobParam.basaliob);
+        mIobData.add("netbasalinsulin", iobParam.netbasalinsulin);
+        mIobData.add("hightempinsulin", iobParam.hightempinsulin);
     }
 
     private void initGlucoseStatus() {

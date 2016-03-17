@@ -2,6 +2,8 @@ package info.nightscout.danar.db;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
+
+import info.nightscout.danaaps.calc.Iob;
 import info.nightscout.danaaps.calc.IobCalc;
 
 import java.util.Date;
@@ -26,16 +28,16 @@ public class Bolus {
     @DatabaseField
     public double amount;
 
-    public IobCalc.Iob calcIobOpenAPS() {
+    public Iob calcIobOpenAPS() {
         IobCalc calc = new IobCalc(timeStart,amount,new Date());
         calc.setBolusDiaTimesTwo();
-        IobCalc.Iob iob = calc.invoke();
+        Iob iob = calc.invoke();
 
         return iob;
     }
-    public IobCalc.Iob calcIob() {
+    public Iob calcIob() {
         IobCalc calc = new IobCalc(timeStart,amount,new Date());
-        IobCalc.Iob iob = calc.invoke();
+        Iob iob = calc.invoke();
 
         return iob;
     }

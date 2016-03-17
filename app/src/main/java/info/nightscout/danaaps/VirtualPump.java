@@ -2,6 +2,7 @@ package info.nightscout.danaaps;
 
 import java.util.Date;
 
+import info.nightscout.client.data.NSProfile;
 import info.nightscout.danar.db.TempBasal;
 
 /**
@@ -13,7 +14,7 @@ public class VirtualPump {
 
     public static double remainUnits = 100;
     public static int remainBattery = 50;
-    public static double currentBasal = 0.2;
+    public static NSProfile nsProfile = MainApp.getNSProfile();
 
     public static Date last_bolus_time = new Date(2016,1,1);
     public static double last_bolus_amount = 0;

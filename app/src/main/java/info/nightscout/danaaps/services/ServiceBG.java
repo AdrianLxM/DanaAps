@@ -21,12 +21,12 @@ import java.util.Date;
 
 import info.nightscout.danaaps.AppExpire;
 import info.nightscout.danaaps.DeviceStatus;
+import info.nightscout.danaaps.calc.Iob;
 import info.nightscout.danar.DanaConnection;
 import info.nightscout.danaaps.MainActivity;
 import info.nightscout.danaaps.MainApp;
 import info.nightscout.danaaps.ReceiverBG;
 import info.nightscout.danar.ServiceConnection;
-import info.nightscout.danaaps.calc.IobCalc;
 import info.nightscout.danar.event.LowSuspendStatus;
 import info.nightscout.danar.event.StatusEvent;
 import info.nightscout.utils.DateUtil;
@@ -93,10 +93,10 @@ public class ServiceBG extends android.app.IntentService {
             double percent = 100 ;
 
             // IOB calculation
-            IobCalc.Iob bolusIobOpenAPS = MainActivity.getIobOpenAPSFromTreatments(MainActivity.loadTreatments());
-            IobCalc.Iob bolusIob = MainActivity.getIobFromTreatments(MainActivity.loadTreatments());
-            IobCalc.Iob basalIob = MainActivity.getIobFromTempBasals(MainActivity.loadTempBasalsDB());
-            broadcastIob(bolusIobOpenAPS, bolusIob, basalIob);
+            Iob bolusIobOpenAPS = MainActivity.getIobOpenAPSFromTreatments(MainActivity.loadTreatments());
+            Iob bolusIob = MainActivity.getIobFromTreatments(MainActivity.loadTreatments());
+            Iob basalIob = MainActivity.getIobFromTempBasals(MainActivity.loadTempBasalsDB());
+            //broadcastIob(bolusIobOpenAPS, bolusIob, basalIob);
             basalIob.plus(bolusIobOpenAPS);
             IobParam iobParam = new IobParam(basalIob.iobContrib, basalIob.activityContrib, bolusIobOpenAPS.iobContrib);
             iobParam.json().put("timestamp", DateUtil.toISOString(new Date()));
@@ -194,7 +194,8 @@ public class ServiceBG extends android.app.IntentService {
                     ) {
                 if (performingOpenAps) {
                     deviceStatus.enacted = new JSONObject(determineBasalResult.json.toString());
-                    deviceStatus.enacted.put("rate", tempAbs);
+                    deviceStatus.enacted.put("rate", 0);
+                    deviceStatus.enacted.put("duration", 0);
                 }
                 log.error("Temp basal off ");
                 danaConnection.connectIfNotConnected("ServiceBG");
@@ -204,7 +205,6 @@ public class ServiceBG extends android.app.IntentService {
                 } else {
                     if (performingOpenAps) {
                         deviceStatus.enacted.put("recieved", true);
-                        deviceStatus.enacted.put("duration", 60);
                         JSONObject requested = new JSONObject();
                         requested.put("duration", determineBasalResult.json.getInt("duration"));
                         requested.put("rate", determineBasalResult.json.getInt("rate"));
@@ -259,7 +259,7 @@ public class ServiceBG extends android.app.IntentService {
 
         return determineBasalResult;
     }
-
+/*
     private void broadcastIob(IobCalc.Iob bolusIobOpenAPS, IobCalc.Iob bolusIob, IobCalc.Iob basalIob) {
         Intent intent = new Intent("danaR.action.IOB_DATA");
 
@@ -275,7 +275,7 @@ public class ServiceBG extends android.app.IntentService {
         intent.putExtras(bundle);
         MainApp.instance().getApplicationContext().sendBroadcast(intent);
     }
-
+*/
     private LowSuspendResult lowSuspend(int glucoseValue, double deltaAvg15min) throws InterruptedException {
         LowSuspendResult lowSuspendResult = new LowSuspendResult();
 

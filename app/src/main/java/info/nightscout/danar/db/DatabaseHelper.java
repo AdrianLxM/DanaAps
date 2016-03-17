@@ -81,6 +81,16 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 		}
 	}
 
+	public void resetTreatments() {
+		try {
+
+			TableUtils.dropTable(connectionSource, Treatment.class, true);
+			TableUtils.createTableIfNotExists(connectionSource, Treatment.class);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
     public Dao<TempBasal, Long> getDaoTempBasals() throws SQLException {
         return  getDao(TempBasal.class);
     }

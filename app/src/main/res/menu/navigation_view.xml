@@ -9,6 +9,9 @@
             android:id="@+id/nav_preferences"
             android:title="Preferences" />
         <item
+            android:id="@+id/nav_refreshtreatments"
+            android:title="Refresh treatments from NS" />
+        <item
             android:id="@+id/nav_resetdb"
             android:title="Reset databases" />
         <item

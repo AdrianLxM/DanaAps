@@ -55,8 +55,8 @@ public class TreatmentDialogFragment extends DialogFragment implements OnClickLi
         switch (view.getId()) {
             case R.id.treatmentDialogDeliverButton:
                 SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(MainApp.instance().getApplicationContext());
-                Double maxbolus = (double) SP.getFloat("safety_maxbolus", 3);
-                Double maxcarbs = (double) SP.getFloat("safety_maxcarbs", 48);
+                Double maxbolus = Double.parseDouble(SP.getString("safety_maxbolus", "3"));
+                Double maxcarbs = Double.parseDouble(SP.getString("safety_maxcarbs", "48"));
 
 
                 String insulinText = this.insulin.getText().toString();

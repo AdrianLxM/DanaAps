@@ -17,9 +17,8 @@ import java.util.Date;
 import java.util.List;
 
 import info.nightscout.client.broadcasts.Intents;
-import info.nightscout.client.data.NSProfile;
 import info.nightscout.danaaps.MainApp;
-import info.nightscout.danaaps.calc.CarbCalc;
+import info.nightscout.danaaps.calc.Iob;
 import info.nightscout.danaaps.calc.IobCalc;
 import info.nightscout.utils.DateUtil;
 
@@ -65,16 +64,49 @@ public class Treatment {
         this.carbs = t.carbs;
     }
 
-    public IobCalc.Iob calcIobOpenAPS() {
+    public Iob iobCalc(Date time, Double dia) {
+        Double diaratio = 3.0 / dia;
+        Double peak = 75d;
+        Double end = 180d;
+        //var sens = profile_data.sens;
+
+        Iob results = new Iob();
+
+        if (insulin != 0) {
+            long bolusTime = created_at.getTime();
+            Double minAgo = diaratio * (time.getTime() - bolusTime) / 1000 / 60;
+            Double iobContrib = 0d;
+            Double activityContrib = 0d;
+
+            if (minAgo < peak) {
+                Double x = (minAgo/5 + 1);
+                iobContrib = insulin * (1 - 0.001852 * x * x + 0.001852 * x);
+                //activityContrib=sens*treatment.insulin*(2/dia/60/peak)*minAgo;
+                activityContrib = insulin * (2 / dia / 60 / peak) * minAgo;
+            } else if (minAgo < end) {
+                Double y = (minAgo-peak)/5;
+                iobContrib = insulin * (0.001323 * y * y - .054233 * y + .55556);
+                //activityContrib=sens*treatment.insulin*(2/dia/60-(minAgo-peak)*2/dia/60/(60*dia-peak));
+                activityContrib = insulin * (2 / dia / 60 - (minAgo - peak) * 2 / dia / 60 / (60 * dia - peak));
+            }
+
+            results.iobContrib = iobContrib;
+            results.activityContrib = activityContrib;
+        }
+
+        return results;
+    }
+
+    public Iob calcIobOpenAPS() {
         IobCalc calc = new IobCalc(created_at,insulin,new Date());
         calc.setBolusDiaTimesTwo();
-        IobCalc.Iob iob = calc.invoke();
+        Iob iob = calc.invoke();
 
         return iob;
     }
-    public IobCalc.Iob calcIob() {
+    public Iob calcIob() {
         IobCalc calc = new IobCalc(created_at,insulin,new Date());
-        IobCalc.Iob iob = calc.invoke();
+        Iob iob = calc.invoke();
 
         return iob;
     }

@@ -2,6 +2,8 @@ package info.nightscout.danar.db;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
+
+import info.nightscout.danaaps.calc.Iob;
 import info.nightscout.danaaps.calc.IobCalc;
 
 import java.util.Calendar;
@@ -48,8 +50,8 @@ public class TempBasal {
         return new Date().getTime() - timeStart.getTime();
     }
 
-    public IobCalc.Iob calcIob() {
-        IobCalc.Iob iob = new IobCalc.Iob();
+    public Iob calcIob() {
+        Iob iob = new Iob();
 
         long msAgo = getMsAgo();
         Calendar startAdjusted = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
