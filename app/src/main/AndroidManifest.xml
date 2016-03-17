@@ -21,6 +21,10 @@
         android:label="@string/app_name"
         android:process=":mainProcess"
         android:theme="@style/AppTheme">
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="c768f534949bb913ea0c73f41cfa4ed582ef8ec8"
+            />
         <activity
             android:name="info.nightscout.danaaps.MainActivity"
             android:label="@string/app_name">

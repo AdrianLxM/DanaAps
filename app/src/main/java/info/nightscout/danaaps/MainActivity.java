@@ -17,6 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.*;
 
+import com.crashlytics.android.Crashlytics;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
@@ -56,6 +57,7 @@ import java.util.List;
 import info.nightscout.danar.event.PreferenceChange;
 import info.nightscout.danar.event.StatusEvent;
 import info.nightscout.danar.event.StopEvent;
+import io.fabric.sdk.android.Fabric;
 
 public class MainActivity extends Activity
         implements TreatmentDialogFragment.Communicator {
@@ -145,6 +147,8 @@ public class MainActivity extends Activity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         log.debug("onCreate");
+        Fabric.with(this, new Crashlytics());
+
         Iconify.with(new FontAwesomeModule());
 
 
