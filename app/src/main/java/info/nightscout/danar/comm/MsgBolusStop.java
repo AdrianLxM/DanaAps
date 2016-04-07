@@ -38,15 +38,15 @@ public class MsgBolusStop extends DanaRMessage {
 
 
     public void handleMessage(byte[] bytes) {
-
+        BolusingEvent bolusingEvent = BolusingEvent.getInstance();
         stopped = true;
-        if (!forced)
+        if (!forced) {
             t.insulin = amount;
-        else {
-            BolusingEvent bolusingEvent = BolusingEvent.getInstance();
+            bolusingEvent.sStatus = "Delivered";
+        } else {
             bolusingEvent.sStatus = "Stopped";
-            bus.post(bolusingEvent);
         }
+        bus.post(bolusingEvent);
     }
 
 

@@ -633,6 +633,14 @@ public class MainActivity extends Activity
         mHandler.post(new Runnable() {
             @Override
             public void run() {
+                while (MainApp.getDanaConnection() == null) {
+                    try {
+                        Thread.sleep(1000);
+                        Toast.makeText(MainApp.instance().getApplicationContext(), "Waiting for service", Toast.LENGTH_SHORT).show();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
                 Treatment t = new Treatment();
                 t.insulin = insulin;
                 t.carbs = carbs;

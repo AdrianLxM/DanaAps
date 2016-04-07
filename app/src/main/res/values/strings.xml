@@ -36,4 +36,10 @@
     <string name="safety_title">Safety</string>
     <string name="safety_maxbolus_title">Max allowed bolus</string>
     <string name="safety_maxcarbs_title">Max allowed carbs</string>
+    <string name="nav_home">Home</string>
+    <string name="nav_preferences">Preferences</string>
+    <string name="nav_refreshtreatments">Refresh treatments from NS</string>
+    <string name="nav_backup">Backup</string>
+    <string name="nav_resetdb">Reset databases</string>
+    <string name="nav_exit">Exit</string>
 </resources>

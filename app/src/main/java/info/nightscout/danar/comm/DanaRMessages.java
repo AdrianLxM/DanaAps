@@ -79,7 +79,7 @@ public class DanaRMessages {
         sDanaRMessages.put(Integer.valueOf(0x0105), new DanaRMessage("CMD_MEALINS_START_NODATA_SPEED"));
 
         sDanaRMessages.put(Integer.valueOf(0x0201), new DanaRMessage("CMD_PUMP_ACT_INS_VALUE"));
-        sDanaRMessages.put(Integer.valueOf(0x0202), new DanaRMessage("CMD_PUMP_THIS_REMAINDER_MEAL_INS"));
+        sDanaRMessages.put(Integer.valueOf(0x0202), new MsgBolusProgress("CMD_PUMP_THIS_REMAINDER_MEAL_INS"));
         sDanaRMessages.put(Integer.valueOf(0x0203), new DanaRMessage("CMD_PUMP_BASE_SET"));
         sDanaRMessages.put(Integer.valueOf(0x0204), new DanaRMessage("CMD_PUMP_CALCULATION_SETTING"));
         sDanaRMessages.put(Integer.valueOf(0x0205), new DanaRMessage("CMD_PUMP_EXERCISE_MODE"));

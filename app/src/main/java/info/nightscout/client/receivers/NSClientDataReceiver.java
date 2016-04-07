@@ -11,6 +11,7 @@ import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.Where;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -162,18 +163,21 @@ public class NSClientDataReceiver extends BroadcastReceiver {
 
         if (intent.getAction().equals(Intents.ACTION_REMOVED_TREATMENT)) {
             try {
-                String trstring = bundles.getString("treatment");
-                JSONObject trJson = new JSONObject(trstring);
-                trJson = new JSONObject(trstring);
-                String _id = trJson.getString("_id");
+                if (bundles.containsKey("treatment")) {
+                    String trstring = bundles.getString("treatment");
+                    JSONObject trJson = new JSONObject(trstring);
+                    String _id = trJson.getString("_id");
+                    removeTreatmentFromDb(_id);
+                }
 
-                Treatment stored = findById(_id);
-                if (stored != null) {
-                    log.debug("REMOVE: Existing treatment (removing): " + trstring);
-                    MainApp.getDbHelper().getDaoTreatments().delete(stored);
-                    MainApp.bus().post(StatusEvent.getInstance());
-                } else {
-                    log.debug("REMOVE: Not stored treatment (ignoring): " + trstring);
+                if (bundles.containsKey("treatments")) {
+                    String trstring = bundles.getString("treatments");
+                    JSONArray jsonArray = new JSONArray(trstring);
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject trJson = jsonArray.getJSONObject(i);
+                        String _id = trJson.getString("_id");
+                        removeTreatmentFromDb(_id);
+                    }
                 }
 
             } catch (JSONException e) {
@@ -181,7 +185,6 @@ public class NSClientDataReceiver extends BroadcastReceiver {
             } catch (Exception e1) {
                 e1.printStackTrace();
             }
-
         }
     }
 
@@ -237,5 +240,16 @@ public class NSClientDataReceiver extends BroadcastReceiver {
             e.printStackTrace();
         }
         return null;
+    }
+
+    private void removeTreatmentFromDb(String _id) throws SQLException {
+        Treatment stored = findById(_id);
+        if (stored != null) {
+            log.debug("REMOVE: Existing treatment (removing): " + _id);
+            MainApp.getDbHelper().getDaoTreatments().delete(stored);
+            MainApp.bus().post(StatusEvent.getInstance());
+        } else {
+            log.debug("REMOVE: Not stored treatment (ignoring): " + _id);
+        }
     }
 }

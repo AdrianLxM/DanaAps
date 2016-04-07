@@ -4,19 +4,19 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_home"
-            android:title="Home" />
+            android:title="@string/nav_home" />
         <item
             android:id="@+id/nav_preferences"
-            android:title="Preferences" />
+            android:title="@string/nav_preferences" />
         <item
             android:id="@+id/nav_refreshtreatments"
-            android:title="Refresh treatments from NS" />
+            android:title="@string/nav_refreshtreatments" />
         <item
             android:id="@+id/nav_resetdb"
-            android:title="Reset databases" />
+            android:title="@string/nav_resetdb" />
         <item
             android:id="@+id/nav_backup"
-            android:title="Backup" />
+            android:title="@string/nav_backup" />
 
         <!--<item
             android:id="@+id/nav_test_alarm"
@@ -26,7 +26,7 @@
 
         <item
             android:id="@+id/nav_exit"
-            android:title="Exit" />
+            android:title="@string/nav_exit" />
 
     </group>
 
