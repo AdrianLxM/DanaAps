@@ -3,6 +3,10 @@ package org.openaps.openAPS;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Date;
+
+import info.nightscout.utils.DateUtil;
+
 /**
  * Created by mike on 28.02.2016.
  */
@@ -38,6 +42,19 @@ public class IobParam {
             json.put("iob", iob);
             json.put("activity", activity);
             json.put("bolusIob", bolussnooze);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return json;
+    }
+
+    public JSONObject nsJson() {
+        JSONObject json = new JSONObject();
+        try {
+            json.put("iob", bolussnooze);
+            json.put("basaliob", iob);
+            json.put("activity", activity);
+            json.put("timestamp", DateUtil.toISOString(new Date()));
         } catch (JSONException e) {
             e.printStackTrace();
         }

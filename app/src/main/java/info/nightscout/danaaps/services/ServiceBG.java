@@ -99,7 +99,6 @@ public class ServiceBG extends android.app.IntentService {
             //broadcastIob(bolusIobOpenAPS, bolusIob, basalIob);
             basalIob.plus(bolusIobOpenAPS);
             IobParam iobParam = new IobParam(basalIob.iobContrib, basalIob.activityContrib, bolusIobOpenAPS.iobContrib);
-            iobParam.json().put("timestamp", DateUtil.toISOString(new Date()));
             //log.debug("IOB prepared: " + iobParam.json().toString());
 
             LowSuspendResult lowSuspendResult = lowSuspend(glucoseValue, deltaAvg15min);
@@ -112,7 +111,13 @@ public class ServiceBG extends android.app.IntentService {
             DeviceStatus deviceStatus = DeviceStatus.getInstance();
             deviceStatus.device = "openaps://" + danaConnection.devName;
             deviceStatus.pump = statusEvent.getJSONStatus();
-            deviceStatus.iob = iobParam.json();
+            deviceStatus.iob = new JSONObject();
+
+            Iob fromBasal = MainActivity.getIobFromTempBasals(MainActivity.loadTempBasalsDB());
+            deviceStatus.iob.put("iob", bolusIob.iobContrib + fromBasal.iobContrib);
+            deviceStatus.iob.put("activity", bolusIob.activityContrib + fromBasal.iobContrib);
+            deviceStatus.iob.put("basaliob", fromBasal.iobContrib);
+            deviceStatus.iob.put("timestamp", DateUtil.toISOString(new Date()));
             deviceStatus.lowsuspend = null;
             deviceStatus.suggested = null;
             deviceStatus.created_at = DateUtil.toISOString(new Date());
