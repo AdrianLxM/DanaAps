@@ -112,7 +112,7 @@ public class DanaRMessages {
         sDanaRMessages.put(Integer.valueOf(0x0409), new DanaRMessage("CMD_PUMPSET_EASY_OFF"));
 
 
-        sDanaRMessages.put(Integer.valueOf(0x0601), new DanaRMessage("CMD_PUMPOWAY_SYSTEM_STATUS"));
+        sDanaRMessages.put(Integer.valueOf(0x0601), new MsgOcclusion("CMD_PUMPOWAY_SYSTEM_STATUS"));
         sDanaRMessages.put(Integer.valueOf(0x0602), new DanaRMessage("CMD_PUMPOWAY_GLUCOSE_ALARM"));
         sDanaRMessages.put(Integer.valueOf(0x0603), new DanaRMessage("CMD_PUMPOWAY_LOW_INSULIN_ALARM"));
         sDanaRMessages.put(Integer.valueOf(0x0610), new DanaRMessage("CMD_PUMP_ALARM_TIEOUT"));

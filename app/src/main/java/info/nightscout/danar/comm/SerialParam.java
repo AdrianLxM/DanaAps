@@ -89,6 +89,13 @@ public class SerialParam {
     public static byte CMD_SUB_SET_ACTIVATE_BASAL_PROFILE = (byte) 0x0c;
 
 
+    public static byte CMD_PUMPOWAY = (byte) 0x60;
+    public static byte CMD_SUB_PUMPOWAY__SYSTEM_STATUS = (byte) 0x01;
+    public static byte CMD_SUB_PUMPOWAY_GLUCOSE_ALARM = (byte) 0x02;
+    public static byte CMD_SUB_PUMPOWAY_LOW_INSULIN_ALARM = (byte) 0x03;
+    public static byte CMD_SUB_PUMPOWAY_ALARM_TIEOUT = (byte) 0x10;
+
+
     public static byte CMD_HISTORY_ALL = (byte) 0x41;
     public static byte CMD_HISTORY_NEW = (byte) 0x42;
     public static byte CMD_SUB_HISTORY_START = (byte) 0xF2;
