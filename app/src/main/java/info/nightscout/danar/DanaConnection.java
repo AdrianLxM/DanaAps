@@ -29,7 +29,6 @@ import info.nightscout.danaaps.tempBasal.Basal;
 import info.nightscout.danar.alarm.ServiceAlarm;
 import info.nightscout.danar.comm.*;
 import info.nightscout.danar.db.Bolus;
-import info.nightscout.danar.db.PumpStatus;
 import info.nightscout.danar.db.TempBasal;
 import info.nightscout.danar.db.Treatment;
 import info.nightscout.danar.event.BolusingEvent;
@@ -355,17 +354,6 @@ public class DanaConnection {
             }
 
 
-            PumpStatus pumpStatus = new PumpStatus();
-            pumpStatus.remainBattery = statusEvent.remainBattery;
-            pumpStatus.remainUnits = statusEvent.remainUnits;
-            pumpStatus.currentBasal = statusEvent.currentBasal;
-            pumpStatus.last_bolus_amount = statusEvent.last_bolus_amount;
-            pumpStatus.last_bolus_time = statusEvent.last_bolus_time;
-            pumpStatus.tempBasalInProgress = statusEvent.tempBasalInProgress;
-            pumpStatus.tempBasalRatio = statusEvent.tempBasalRatio;
-            pumpStatus.tempBasalRemainMin = statusEvent.tempBasalRemainMin;
-            pumpStatus.tempBasalStart = statusEvent.tempBasalStart;
-            pumpStatus.time = statusEvent.time;//Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTime();
             statusEvent.timeLastSync = statusEvent.time;
 
             if(statusEvent.tempBasalInProgress) {
@@ -454,13 +442,6 @@ public class DanaConnection {
                 log.error(e.getMessage(), e);
             }
 
-
-
-            try {
-                MainApp.getDbHelper().getDaoPumpStatus().createOrUpdate(pumpStatus);
-            } catch (SQLException e) {
-                log.error("SQLException",e);
-            }
             synchronized (this) {
                 this.notify();
             }

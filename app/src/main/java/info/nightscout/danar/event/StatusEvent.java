@@ -5,7 +5,6 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
 import info.nightscout.danaaps.MainApp;
-import info.nightscout.danar.db.PumpStatus;
 import info.nightscout.utils.DateUtil;
 
 import org.json.JSONException;
@@ -52,44 +51,11 @@ public class StatusEvent {
     public static StatusEvent getInstance() {
         if(statusEvent == null) {
             statusEvent = new StatusEvent();
-
-            //loadLastStatus();
-
         }
         statusEvent.updateTempBasalData();
 
 
         return statusEvent;
-    }
-
-    private static void loadLastStatus() {
-        PumpStatus pumpStatus;
-        try {
-            Dao<PumpStatus, Long> dao = MainApp.getDbHelper().getDaoPumpStatus();
-            QueryBuilder<PumpStatus, Long> queryBuilder = dao.queryBuilder();
-            queryBuilder.orderBy("timeIndex",false);
-            queryBuilder.limit(1l);
-            PreparedQuery<PumpStatus> preparedQuery = queryBuilder.prepare();
-            pumpStatus = dao.queryForFirst(preparedQuery);
-            if(pumpStatus!=null) {
-
-                statusEvent.remainBattery = pumpStatus.remainBattery;
-                statusEvent.remainUnits = pumpStatus.remainUnits;
-                statusEvent.currentBasal = pumpStatus.currentBasal;
-                statusEvent.last_bolus_amount = pumpStatus.last_bolus_amount;
-                statusEvent.last_bolus_time = pumpStatus.last_bolus_time;
-                statusEvent.tempBasalInProgress = pumpStatus.tempBasalInProgress;
-                statusEvent.tempBasalRatio = pumpStatus.tempBasalRatio;
-                statusEvent.tempBasalRemainMin = pumpStatus.tempBasalRemainMin;
-                statusEvent.tempBasalStart = pumpStatus.tempBasalStart;
-                statusEvent.time = pumpStatus.time;
-                statusEvent.timeLastSync = statusEvent.time;
-
-                log.debug("loadLastStatus " + pumpStatus.toString() + " into " + statusEvent.toString());
-            }
-        } catch (SQLException e) {
-            log.error("SQLException",e);
-        }
     }
 
     private void updateTempBasalData() {

@@ -31,7 +31,6 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 		try {
 			log.info("onCreate");
 			TableUtils.createTableIfNotExists(connectionSource, TempBasal.class);
-			TableUtils.createTableIfNotExists(connectionSource, PumpStatus.class);
             TableUtils.createTableIfNotExists(connectionSource, Bolus.class);
 			TableUtils.createTableIfNotExists(connectionSource, HistoryRecord.class);
 			TableUtils.createTableIfNotExists(connectionSource, Treatment.class);
@@ -46,7 +45,6 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 		try {
 			log.info(DatabaseHelper.class.getName(), "onUpgrade");
 			TableUtils.dropTable(connectionSource, TempBasal.class, true);
-			TableUtils.dropTable(connectionSource, PumpStatus.class, true);
 			TableUtils.dropTable(connectionSource, Bolus.class, true);
 			TableUtils.dropTable(connectionSource, HistoryRecord.class, true);
 			TableUtils.dropTable(connectionSource, Treatment.class, true);
@@ -68,12 +66,10 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 	public void resetDatabases() {
 		try {
 			TableUtils.dropTable(connectionSource, TempBasal.class, true);
-			TableUtils.dropTable(connectionSource, PumpStatus.class, true);
 			TableUtils.dropTable(connectionSource, Bolus.class, true);
 			TableUtils.dropTable(connectionSource, HistoryRecord.class, true);
 			TableUtils.dropTable(connectionSource, Treatment.class, true);
 			TableUtils.createTableIfNotExists(connectionSource, TempBasal.class);
-			TableUtils.createTableIfNotExists(connectionSource, PumpStatus.class);
 			TableUtils.createTableIfNotExists(connectionSource, Bolus.class);
 			TableUtils.createTableIfNotExists(connectionSource, Treatment.class);
 		} catch (SQLException e) {
@@ -93,11 +89,6 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
     public Dao<TempBasal, Long> getDaoTempBasals() throws SQLException {
         return  getDao(TempBasal.class);
-    }
-
-    public Dao<PumpStatus, Long> getDaoPumpStatus() throws SQLException {
-//        getDao(PumpStatus.class).executeRaw("ALTER TABLE 'PumpStatus' ADD COLUMN 'tempBasalStart' VARCHAR;");
-        return  getDao(PumpStatus.class);
     }
 
     public Dao<Bolus, Long> getDaoBolus() throws SQLException {
