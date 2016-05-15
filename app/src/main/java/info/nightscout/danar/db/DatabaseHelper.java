@@ -96,11 +96,6 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         return  getDao(Bolus.class);
     }
 
-    public Dao<Carbs, Long> getDaoCarbs() throws SQLException {
-//        TableUtils.createTableIfNotExists(connectionSource, Carbs.class);
-        return  getDao(Carbs.class);
-    }
-
 	public Dao<HistoryRecord, String> getDaoHistoryRecords() throws SQLException {
 		return  getDao(HistoryRecord.class);
 	}
