@@ -28,7 +28,6 @@ import info.nightscout.danaaps.VirtualPump;
 import info.nightscout.danaaps.tempBasal.Basal;
 import info.nightscout.danar.alarm.ServiceAlarm;
 import info.nightscout.danar.comm.*;
-import info.nightscout.danar.db.Bolus;
 import info.nightscout.danar.db.TempBasal;
 import info.nightscout.danar.db.Treatment;
 import info.nightscout.danar.event.BolusingEvent;
@@ -430,16 +429,6 @@ public class DanaConnection {
                 }catch (SQLException e) {
                     log.error(e.getMessage(), e);
                 }
-            }
-
-            try {
-                Dao<Bolus, Long> daoBolus = MainApp.getDbHelper().getDaoBolus();
-                Bolus bolus = new Bolus();
-                bolus.timeStart = statusEvent.last_bolus_time;
-                bolus.amount = statusEvent.last_bolus_amount;
-                daoBolus.createOrUpdate(bolus);
-            } catch (SQLException e) {
-                log.error(e.getMessage(), e);
             }
 
             synchronized (this) {

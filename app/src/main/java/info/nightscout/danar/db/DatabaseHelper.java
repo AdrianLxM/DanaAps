@@ -31,7 +31,6 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 		try {
 			log.info("onCreate");
 			TableUtils.createTableIfNotExists(connectionSource, TempBasal.class);
-            TableUtils.createTableIfNotExists(connectionSource, Bolus.class);
 			TableUtils.createTableIfNotExists(connectionSource, HistoryRecord.class);
 			TableUtils.createTableIfNotExists(connectionSource, Treatment.class);
 		} catch (SQLException e) {
@@ -45,7 +44,6 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 		try {
 			log.info(DatabaseHelper.class.getName(), "onUpgrade");
 			TableUtils.dropTable(connectionSource, TempBasal.class, true);
-			TableUtils.dropTable(connectionSource, Bolus.class, true);
 			TableUtils.dropTable(connectionSource, HistoryRecord.class, true);
 			TableUtils.dropTable(connectionSource, Treatment.class, true);
 			onCreate(database, connectionSource);
@@ -66,11 +64,9 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 	public void resetDatabases() {
 		try {
 			TableUtils.dropTable(connectionSource, TempBasal.class, true);
-			TableUtils.dropTable(connectionSource, Bolus.class, true);
 			TableUtils.dropTable(connectionSource, HistoryRecord.class, true);
 			TableUtils.dropTable(connectionSource, Treatment.class, true);
 			TableUtils.createTableIfNotExists(connectionSource, TempBasal.class);
-			TableUtils.createTableIfNotExists(connectionSource, Bolus.class);
 			TableUtils.createTableIfNotExists(connectionSource, Treatment.class);
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -89,11 +85,6 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
     public Dao<TempBasal, Long> getDaoTempBasals() throws SQLException {
         return  getDao(TempBasal.class);
-    }
-
-    public Dao<Bolus, Long> getDaoBolus() throws SQLException {
-
-        return  getDao(Bolus.class);
     }
 
 	public Dao<HistoryRecord, String> getDaoHistoryRecords() throws SQLException {
