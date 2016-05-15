@@ -22,7 +22,10 @@ public class ServiceAlarm extends Service {
         long lastAlarm = preferences.getLong("lastAlarm", 0);
         long currentTime = new Date().getTime();
 
-        if((currentTime - lastAlarm) < 15*60*1000 ) {
+        if (!PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getBoolean("masterSwitch", false)) {
+            stopSelf(startId);
+            Log.i(TAG, "Alarm posponed - master switch disabled");
+        } else if((currentTime - lastAlarm) < 15*60*1000 ) {
             stopSelf(startId);
             Log.i(TAG, "Alarm posponed");
         } else {

@@ -57,6 +57,19 @@
                     android:text=""
                     android:textSize="22dp"
                     android:background="@drawable/bgblue"/>
+
+                <TextView
+                    android:paddingLeft="5dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/version" />
+                <Switch
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="5dp"
+                    android:text=""
+                    android:id="@+id/masterSwitch"
+                    />
             </LinearLayout>
 
             <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -324,15 +337,24 @@
                     android:id="@+id/extendedBolusSoFar"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="15dp"
                     android:paddingLeft="5dp"
                     android:paddingRight="5dp"
                     android:layout_weight="1"
-                    android:text=""
                     android:textSize="22dp"/>
 
                 <TextView
                     android:id="@+id/extendedBolusAmount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="5dp"
+                    android:paddingRight="5dp"
+                    android:layout_weight="0.62"
+                    android:gravity="center_vertical|right"
+                    android:text=""
+                    android:textSize="22dp"/>
+
+                <TextView
+                    android:id="@+id/extendedBolusRatio"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingLeft="5dp"
@@ -353,7 +375,8 @@
         android:orientation="vertical"
         android:background="@drawable/bggray"
         android:layout_marginTop="5dp"
-        android:layout_marginBottom="5dp">
+        android:layout_marginBottom="5dp"
+        android:id="@+id/openApsLinearLayout">
 
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:tools="http://schemas.android.com/tools"
@@ -368,7 +391,7 @@
                 android:layout_weight="3"
                 android:textSize="20sp"
                 android:gravity="center_vertical"
-                android:layout_marginLeft="50dp"
+                android:layout_marginLeft="5dp"
                 android:textColor="#bdbdbd" />
 
             <TextView
@@ -416,16 +439,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="3"
                 android:textSize="20sp"
-                android:gravity="center_vertical"
-                android:layout_marginRight="50dp" />
-
-        </LinearLayout>
-
-        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:tools="http://schemas.android.com/tools"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
+                android:gravity="center_vertical" />
 
             <TextView
                 android:text="∆15"
@@ -444,63 +458,7 @@
                 android:layout_weight="3"
                 android:textSize="20sp"
                 android:gravity="center_vertical"
-                />
-
-            <TextView
-                android:text="∆30"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="3"
-                android:textSize="13sp"
-                android:gravity="center_vertical"
-                android:textColor="#bdbdbd" />
-
-            <TextView
-                android:id="@+id/bgDeltaAvg30m"
-                android:text=""
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="3"
-                android:textSize="20sp"
-                android:gravity="center_vertical"
-                />
-
-            <TextView
-                android:text="ø15"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="3"
-                android:textSize="13sp"
-                android:gravity="center_vertical"
-                android:textColor="#bdbdbd" />
-
-            <TextView
-                android:id="@+id/bgAvg15m"
-                android:text=""
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="3"
-                android:textSize="20sp"
-                android:gravity="center_vertical"
-                />
-
-            <TextView
-                android:text="ø30m"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="3"
-                android:textSize="13sp"
-                android:gravity="center_vertical"
-                android:textColor="#bdbdbd" />
-
-            <TextView
-                android:id="@+id/bgAvg30m"
-                android:text=""
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="3"
-                android:textSize="20sp"
-                android:gravity="center_vertical"
+                android:layout_marginRight="5dp"
                 />
 
         </LinearLayout>
@@ -753,7 +711,7 @@
                 style="?android:attr/buttonStyleSmall"
                 android:id="@+id/buttonTB"
                 android:text="TEMP OFF"
-                android:layout_weight="1"
+                android:layout_weight="0.30"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 />
@@ -772,7 +730,18 @@
                 android:text="Treatment"
                 android:layout_weight="0.30"
                 android:id="@+id/treatmentButton"
+                android:layout_marginRight="5dp"
                 android:background="#FFB347" />
+
+            <Button
+                style="?android:attr/buttonStyleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Calculator"
+                android:layout_weight="0.30"
+                android:id="@+id/wizardButton"
+                android:layout_marginLeft="5dp"
+                android:background="#77DD77" />
 
         </LinearLayout>
 

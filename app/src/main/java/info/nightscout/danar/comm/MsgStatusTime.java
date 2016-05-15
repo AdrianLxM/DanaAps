@@ -21,6 +21,7 @@ public class MsgStatusTime extends DanaRMessage {
     }
 
     public void handleMessage(byte[] bytes) {
+        received = true;
         Date time  =
                 new Date(
                     100 + DanaRMessages.byteArrayToInt(bytes, 5, 1),

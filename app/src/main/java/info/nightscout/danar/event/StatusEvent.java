@@ -26,7 +26,7 @@ public class StatusEvent {
     public Double remainUnits = 0d;
     public int remainBattery = 0;
 
-    public int tempBasalInProgress = 0;
+    public boolean tempBasalInProgress = false;
     public int tempBasalRatio = -1;
     public int tempBasalRemainMin = 0 ;
     public int tempBasalTotalSec;
@@ -45,13 +45,15 @@ public class StatusEvent {
     public int statusBolusExtendedDurationInMinutes = 0;
     public int statusBolusExtendedDurationSoFarInMinutes = 0;
     public double statusBolusExtendedPlannedAmount = 0d;
+    public double statusBolusExtendedAbsoluteRate = 0d;
+    public Date statusBolusExtendedStart = null;
+    public int statusBolusExtendedRemainingMin = 0;
 
     public static StatusEvent getInstance() {
         if(statusEvent == null) {
-            PumpStatus pumpStatus = null;
             statusEvent = new StatusEvent();
 
-            loadLastStatus();
+            //loadLastStatus();
 
         }
         statusEvent.updateTempBasalData();
@@ -96,7 +98,7 @@ public class StatusEvent {
         log.debug("updateTempBasalData: lastSyncMinAgo:"+lastSyncMinAgo +
                 " tempBasalInProgress:"+tempBasalInProgress);
 
-        if(lastSyncMinAgo>1 && tempBasalInProgress==1) {
+        if(lastSyncMinAgo > 1 && tempBasalInProgress) {
             if(statusEvent.tempBasalStart != null) {
 
                 long tempBasalMinAgo = (currentTime.getTime() - tempBasalStart.getTime()) / 60_000;
@@ -107,9 +109,26 @@ public class StatusEvent {
 
                 if (tempBasalRemainMin <= 0) {
                     tempBasalRemainMin = 0;
-                    tempBasalInProgress = 0;
+                    tempBasalInProgress = false;
                     tempBasalRatio = -1;
                     log.debug("Temp basal expired");
+                }
+            }
+        }
+
+        if(lastSyncMinAgo > 1 && statusBolusExtendedInProgress) {
+            if(statusEvent.statusBolusExtendedStart != null) {
+
+                long extendedMinAgo = (currentTime.getTime() - statusBolusExtendedStart.getTime()) / 60_000;
+                statusBolusExtendedRemainingMin = /* duration */ (int) (statusBolusExtendedDurationInMinutes - extendedMinAgo);
+                log.debug("updateExtenedData: extendedMinAgo:" + extendedMinAgo +
+                        " statusBolusExtendedStart:" + statusBolusExtendedStart +
+                        " statusBolusExtendedRemainingMin:" + statusBolusExtendedRemainingMin);
+
+                if (statusBolusExtendedRemainingMin <= 0) {
+                    statusBolusExtendedRemainingMin = 0;
+                    statusBolusExtendedInProgress = false;
+                    log.debug("Exteneded bolus expired");
                 }
             }
         }

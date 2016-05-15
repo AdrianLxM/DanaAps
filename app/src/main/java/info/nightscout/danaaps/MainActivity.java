@@ -7,6 +7,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.os.*;
 import android.preference.PreferenceManager;
@@ -28,8 +29,8 @@ import com.squareup.otto.Subscribe;
 import info.nightscout.client.data.NSProfile;
 import info.nightscout.danaaps.calc.CarbCalc;
 import info.nightscout.danaaps.calc.Iob;
-import info.nightscout.danaaps.carbs.TreatmentDialogFragment;
-import info.nightscout.client.receivers.NSClientDataReceiver;
+import info.nightscout.danaaps.dialogs.TreatmentDialogFragment;
+import info.nightscout.danaaps.dialogs.WizardDialogFragment;
 import info.nightscout.danar.DanaConnection;
 import info.nightscout.danar.db.DatabaseHelper;
 import info.nightscout.danar.db.TempBasal;
@@ -38,7 +39,6 @@ import info.nightscout.danar.event.BolusingEvent;
 import info.nightscout.danar.event.ConnectionStatusEvent;
 import info.nightscout.danar.event.LowSuspendStatus;
 
-import org.openaps.openAPS.IobParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,7 +60,7 @@ import info.nightscout.danar.event.StopEvent;
 import io.fabric.sdk.android.Fabric;
 
 public class MainActivity extends Activity
-        implements TreatmentDialogFragment.Communicator {
+        implements TreatmentDialogFragment.Communicator, WizardDialogFragment.Communicator {
     private static Logger log = LoggerFactory.getLogger(MainActivity.class);
 
     private static DecimalFormat format2digits = new DecimalFormat("00");
@@ -78,6 +78,7 @@ public class MainActivity extends Activity
     TextView tempBasalClock;
     TextView currentBasal;
 
+    TextView extendedBolusRatio;
     TextView extendedBolusAmount;
     TextView extendedBolusSoFar;
     TextView lastBolusAmount;
@@ -96,10 +97,7 @@ public class MainActivity extends Activity
     private TextView bgTime;
     private TextView bgValue;
     private TextView bgDelta;
-    private TextView bgDeltaAvg15m;
-    private TextView bgDeltaAvg30m;
-    private TextView bgAvg15m;
-    private TextView bgAvg30m;
+    private TextView bgAvgDelta;
 
     LinearLayout linearTemp;
     LinearLayout linearBolusing;
@@ -108,6 +106,7 @@ public class MainActivity extends Activity
     Button tbButton;
     Button bolusStopButton;
     Button carbsButton;
+    Button wizardButton;
     NavigationView mNavigationView;
 
     DrawerLayout mDrawerLayout;
@@ -119,8 +118,12 @@ public class MainActivity extends Activity
     private TextView openApsStatus;
     private Switch switchOpenAPS;
     private Switch switchLowSuspend;
+    private Switch masterSwitch;
 
     private boolean bolusStopButtonPressed = false;
+
+    public static  double lastBG = 0;
+    public static Date lastBGTime = null;
 
     private void initNavDrawer() {
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -151,8 +154,13 @@ public class MainActivity extends Activity
 
         Iconify.with(new FontAwesomeModule());
 
-
         setContentView(R.layout.activity_main);
+
+        try {
+            ((TextView) findViewById(R.id.version)).setText("v" + getPackageManager().getPackageInfo(getPackageName(), 0).versionName);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
 
         initNavDrawer();
         registerGUIElements();
@@ -201,6 +209,7 @@ public class MainActivity extends Activity
         linearBolusing = (LinearLayout) findViewById(R.id.linearBolusing);
         linearExtended = (LinearLayout) findViewById(R.id.linearExtended);
 
+        extendedBolusRatio =(TextView) findViewById(R.id.extendedBolusRatio);
         extendedBolusAmount =(TextView) findViewById(R.id.extendedBolusAmount);
         extendedBolusSoFar =(TextView) findViewById(R.id.extendedBolusSoFar);
         lastBolusAmount =   (TextView) findViewById(R.id.lastBolusAmount);
@@ -227,16 +236,14 @@ public class MainActivity extends Activity
         bgTime = (TextView) findViewById(R.id.bgTime);
         bgValue = (TextView) findViewById(R.id.bgValue);
         bgDelta = (TextView) findViewById(R.id.bgDelta);
-        bgDeltaAvg15m = (TextView) findViewById(R.id.bgDeltaAvg15m);
-        bgDeltaAvg30m = (TextView) findViewById(R.id.bgDeltaAvg30m);
-        bgAvg15m = (TextView) findViewById(R.id.bgAvg15m);
-        bgAvg30m = (TextView) findViewById(R.id.bgAvg30m);
+        bgAvgDelta = (TextView) findViewById(R.id.bgDeltaAvg15m);
 
         openApsStatus = (TextView) findViewById(R.id.OpenApsStatus);
         lowSuspend = (TextView) findViewById(R.id.lowSuspend);
         lowSuspendProjected = (TextView) findViewById(R.id.lowSuspendProjected);
         switchLowSuspend = (Switch) findViewById(R.id.switchLowSuspend);
         switchOpenAPS = (Switch) findViewById(R.id.switchOpenAPS);
+        masterSwitch = (Switch) findViewById(R.id.masterSwitch);
 
         boolean openAPSenabled = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getBoolean("OpenAPSenabled", false);
         switchOpenAPS.setChecked(openAPSenabled);
@@ -264,6 +271,26 @@ public class MainActivity extends Activity
             }
         });
 
+        boolean MasterSwitchEnabled = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getBoolean("masterSwitch", false);
+        masterSwitch.setChecked(MasterSwitchEnabled);
+        if (!MasterSwitchEnabled) {
+            findViewById(R.id.openApsLinearLayout).setVisibility(LinearLayout.GONE);
+        }
+        masterSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.putBoolean("masterSwitch",isChecked);
+                editor.commit();
+                if (!isChecked) {
+                    findViewById(R.id.openApsLinearLayout).setVisibility(LinearLayout.GONE);
+                } else {
+                    findViewById(R.id.openApsLinearLayout).setVisibility(LinearLayout.VISIBLE);
+                }
+            }
+        });
+
         tbButton = (Button) findViewById(R.id.buttonTB);
 
         tbButton.setOnClickListener(new View.OnClickListener() {
@@ -279,9 +306,10 @@ public class MainActivity extends Activity
                                 dc.connectIfNotConnected("tempBasal UI Button");
                                 //if ("STOP".equals(tbButton.getText())) {
                                 dc.tempBasalOff(true);
-                                //} else {
-                                //    dc.tempBasal(0, 1);
-                                //}
+                                final SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(MainApp.instance().getApplicationContext());
+                                final boolean useExtendedBoluses = SP.getBoolean("safety_useextended", false);
+                                if (useExtendedBoluses)
+                                    dc.extendedOff(true);
                             } else
                                 log.error("tempBasal UI Button: dc==null");
                         } catch (Exception e) {
@@ -321,13 +349,22 @@ public class MainActivity extends Activity
         });
 
         carbsButton = (Button) findViewById(R.id.treatmentButton);
-
         carbsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 FragmentManager manager = getFragmentManager();
                 TreatmentDialogFragment treatmentDialogFragment = new TreatmentDialogFragment();
                 treatmentDialogFragment.show(manager, "TreatmentDialog");
+            }
+        });
+
+        wizardButton = (Button) findViewById(R.id.wizardButton);
+        wizardButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FragmentManager manager = getFragmentManager();
+                WizardDialogFragment wizardDialogFragment = new WizardDialogFragment();
+                wizardDialogFragment.show(manager, "WizardDialog");
             }
         });
     }
@@ -528,7 +565,6 @@ public class MainActivity extends Activity
         PendingIntent pi = PendingIntent.getBroadcast( this, 0, intent, 0 );
 
         long interval = 30*60_000L;
-        long triggerTime = SystemClock.elapsedRealtime() + interval;
 
         try {
             pi.send();
@@ -582,8 +618,9 @@ public class MainActivity extends Activity
 
                 if (ev.statusBolusExtendedInProgress) {
                     linearExtended.setVisibility(LinearLayout.VISIBLE);
+                    extendedBolusRatio.setText(formatNumber1place.format(ev.statusBolusExtendedAbsoluteRate) + "u/h");
                     extendedBolusAmount.setText(formatNumber1place.format(ev.statusBolusExtendedPlannedAmount) + "u");
-                    extendedBolusSoFar.setText(ev.statusBolusExtendedDurationSoFarInMinutes + "of" + ev.statusBolusExtendedDurationInMinutes + "min");
+                    extendedBolusSoFar.setText(ev.statusBolusExtendedDurationSoFarInMinutes + "/" + ev.statusBolusExtendedDurationInMinutes + "m");
                 } else {
                     linearExtended.setVisibility(LinearLayout.GONE);
                 }
@@ -618,10 +655,7 @@ public class MainActivity extends Activity
         bgTime.setText(formatDateToJustTime.format(lowSuspendStatus.time));
         bgValue.setText(fromMgdltoString(lowSuspendStatus.bg.doubleValue(), units));
         bgDelta.setText(fromMgdltoString(lowSuspendStatus.delta.doubleValue(), units));
-        bgDeltaAvg15m.setText(fromMgdltoString(lowSuspendStatus.deltaAvg15m, units));
-        bgDeltaAvg30m.setText(fromMgdltoString(lowSuspendStatus.deltaAvg15m, units));
-        bgAvg15m.setText(fromMgdltoString(lowSuspendStatus.avg15m, units));
-        bgAvg30m.setText(fromMgdltoString(lowSuspendStatus.avg30m, units));
+        bgAvgDelta.setText(fromMgdltoString(lowSuspendStatus.avgdelta, units));
         openApsStatus.setText(lowSuspendStatus.openApsText);
         lowSuspend.setText(lowSuspendStatus.lowSuspenResult.low ? "{fa-exclamation-triangle}" : "{fa-check}");
         lowSuspendProjected.setText(lowSuspendStatus.lowSuspenResult.lowProjected ? "{fa-exclamation-triangle}" : "{fa-check}");

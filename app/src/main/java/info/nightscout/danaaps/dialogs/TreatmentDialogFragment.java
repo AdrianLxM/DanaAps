@@ -1,4 +1,4 @@
-package info.nightscout.danaaps.carbs;
+package info.nightscout.danaaps.dialogs;
 
 import android.app.Activity;
 import android.app.DialogFragment;

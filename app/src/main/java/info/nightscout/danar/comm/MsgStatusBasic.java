@@ -20,7 +20,7 @@ public class MsgStatusBasic extends DanaRMessage {
 
 
     public void handleMessage(byte[] bytes) {
-
+        received = true;
         byte statusSuspend = (byte) DanaRMessages.byteArrayToInt(bytes,0,1); //0 - 0
         int num1 = DanaRMessages.byteArrayToInt(bytes,1,1); // 1 - 1
         long statusDailyPulse = (int) DanaRMessages.byteArrayToInt(bytes,2,3); // 2 - 4
@@ -41,10 +41,10 @@ public class MsgStatusBasic extends DanaRMessage {
 
         ev.remainUnits = (double) (statusRemainPulse / 750d);
         ev.remainBattery = DanaRMessages.byteArrayToInt(bytes, 20, 1);
-        ev.tempBasalInProgress = DanaRMessages.byteArrayToInt(bytes, 15, 1);
+        ev.tempBasalInProgress = DanaRMessages.byteArrayToInt(bytes, 15, 1) == 1;
 
         ev.tempBasalRatio = DanaRMessages.byteArrayToInt(bytes, 13, 1) & 255;
-        if(ev.tempBasalInProgress!=1) {
+        if(!ev.tempBasalInProgress) {
             ev.tempBasalRatio = -1;
         }
 

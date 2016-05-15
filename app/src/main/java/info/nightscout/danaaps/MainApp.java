@@ -12,6 +12,8 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Date;
+
 import info.nightscout.client.data.NSProfile;
 import info.nightscout.danar.DanaConnection;
 import info.nightscout.danar.db.DatabaseHelper;

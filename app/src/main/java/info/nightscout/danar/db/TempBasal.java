@@ -3,6 +3,9 @@ package info.nightscout.danar.db;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import info.nightscout.danaaps.calc.Iob;
 import info.nightscout.danaaps.calc.IobCalc;
 
@@ -12,6 +15,8 @@ import java.util.TimeZone;
 
 @DatabaseTable(tableName = "TempBasals")
 public class TempBasal {
+    private static Logger log = LoggerFactory.getLogger(TempBasal.class);
+
     public long getTimeIndex() {
         return (long) Math.ceil(timeStart.getTime() / 60000d );
     }
@@ -34,7 +39,7 @@ public class TempBasal {
     public int percent;
 
     @DatabaseField
-    public int duration;
+    public int duration; // in minutes now
 
     @DatabaseField
     public int baseRatio;
@@ -42,8 +47,11 @@ public class TempBasal {
     @DatabaseField
     public int tempRatio;
 
+    @DatabaseField
+    public boolean isExtended;
+
     public Date getPlannedTimeEnd() {
-         return new Date( timeStart.getTime()+60*60*1_000*duration );
+         return new Date( timeStart.getTime() + 60 * 1_000 * duration );
     }
 
     public long getMsAgo() {
@@ -83,6 +91,10 @@ public class TempBasal {
             iob.plus(iobCalc.invoke());
         }
 
+        log.debug("TempIOB start: " + this.timeStart + " end: " + this.timeEnd  + " Percent: " + this.percent + " Duration: " + this.duration + " CalcDurat: " + (int)((currentTimeEnd.getTime()-this.timeStart.getTime())/1000/60)
+                + "min minAgo: " + (int)(msAgo / 1000 / 60) + " IOB: " + iob.iobContrib + " Activity: " + iob.activityContrib + " Impact: " + (-0.01d*(baseRatio- tempRatio)*((currentTimeEnd.getTime()-this.timeStart.getTime())/1000/60)/60)
+        );
+
         return iob;
     }
 
@@ -93,7 +105,7 @@ public class TempBasal {
                         timeEnd.getTime() :
                         tempBasalTimePlannedEnd.getTime() < new Date().getTime() ?
                                 tempBasalTimePlannedEnd.getTime() :
-                                timeStart.getTime()+60*60_000*duration );
+                                timeStart.getTime() + 60_000 * duration );
     }
 
     public  int getRemainingMinutes() {

@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="10dp"
+    android:orientation="vertical"
+    >
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/wizardCarbBGTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:text="BG"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:layout_gravity="center_horizontal"
+            android:width="80dp" />
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:id="@+id/wizardBGInput"
+            android:padding="10dp"
+            android:layout_gravity="center_horizontal"
+            android:inputType="numberDecimal"
+            android:gravity="center_horizontal"
+            android:layout_weight="0.5" />
+
+        <TextView
+            android:id="@+id/wizardBGUnits"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="mg/dL"
+            android:layout_gravity="center_vertical"
+            android:gravity="left"
+            android:paddingLeft="5dp"
+            android:minWidth="40dp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/textViewWizardCarbTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:text="Carbs"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:layout_gravity="center_horizontal"
+            android:width="80dp" />
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text=""
+            android:id="@+id/wizardCarbsInput"
+            android:padding="10dp"
+            android:minWidth="200dp"
+            android:layout_gravity="center_horizontal"
+            android:inputType="numberDecimal"
+            android:gravity="center_horizontal"
+            android:layout_weight="0.5" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="g"
+            android:layout_gravity="center_vertical"
+            android:gravity="left"
+            android:paddingLeft="5dp"
+            android:minWidth="40dp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/textViewWizardInsulinCorrectionTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:text="Corr"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:layout_gravity="center_horizontal"
+            android:width="80dp" />
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text=""
+            android:id="@+id/wizardCorrectionInput"
+            android:padding="10dp"
+            android:minWidth="200dp"
+            android:layout_gravity="center_horizontal"
+            android:inputType="numberSigned|numberDecimal"
+            android:gravity="center_horizontal"
+            android:layout_weight="0.5" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="U"
+            android:layout_gravity="center_vertical"
+            android:gravity="left"
+            android:paddingLeft="5dp"
+            android:minWidth="40dp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center">
+
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:width="32dp"
+            android:id="@+id/wizardBGCheckbox"
+            android:checked="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="BG:"
+            android:width="50dp"
+            android:id="@+id/textView" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:width="100dp"
+            android:id="@+id/wizardBG" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:id="@+id/wizardBGInsulin"
+            android:width="50dp"
+            android:gravity="end" />
+    </LinearLayout>
+
+   <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+       android:layout_gravity="center">
+
+       <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:width="32dp" />
+
+       <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="Carbs:"
+            android:width="50dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:width="100dp"
+            android:id="@+id/wizardCarbs" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:id="@+id/wizardCarbsInsulin"
+            android:width="50dp"
+            android:gravity="end" />
+    </LinearLayout>
+
+   <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+       android:layout_gravity="center">
+
+       <CheckBox
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:width="32dp"
+           android:id="@+id/wizardIOBCheckbox"
+           android:checked="true" />
+
+       <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="IOB:"
+            android:width="50dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:width="100dp"
+            android:id="@+id/wizardIOB" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:id="@+id/wizardIOBInsulin"
+            android:width="50dp"
+            android:gravity="end" />
+    </LinearLayout>
+
+   <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+       android:layout_gravity="center">
+
+       <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:width="32dp" />
+
+       <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="Corr:"
+            android:width="50dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:width="100dp"
+            android:id="@+id/wizardCorrection" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:id="@+id/wizardCorrectionInsulin"
+            android:width="50dp"
+            android:gravity="end" />
+    </LinearLayout>
+
+   <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+       android:layout_gravity="center">
+
+       <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:width="32dp" />
+
+       <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textStyle="bold"
+            android:text="TOTAL:"
+            android:width="50dp"
+           android:height="30dp"
+           android:gravity="center_vertical"
+           android:textColor="@color/accent_material_light" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:width="100dp"
+            android:id="@+id/wizardTotal" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textStyle="bold"
+            android:id="@+id/wizardTotalInsulin"
+            android:width="50dp"
+            android:gravity="center_vertical|end"
+            android:textColor="@color/accent_material_light" />
+    </LinearLayout>
+
+
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:orientation="horizontal"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_gravity="right">
+
+    <Button
+        android:id="@+id/wizardDialogDeliverButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="SEND TO PUMP"
+        android:textSize="20sp"
+        android:padding="10dp"
+        android:layout_weight="1"
+        android:textAllCaps="false"
+        />
+
+    </LinearLayout>
+
+
+</LinearLayout>

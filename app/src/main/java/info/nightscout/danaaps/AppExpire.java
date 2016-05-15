@@ -1,19 +1,26 @@
 package info.nightscout.danaaps;
 
+import android.content.Context;
 import android.widget.Toast;
 
 import java.util.Date;
+import java.util.GregorianCalendar;
+
+import info.nightscout.danaaps.utils.ToastUtils;
 
 /**
  * Created by mike on 04.03.2016.
  */
 public class AppExpire {
-    static final Date date = new Date(116,5,1);
+    static private GregorianCalendar date = new GregorianCalendar(2016, 9, 1);
 
-    public static boolean isExpired() {
-        boolean expiring =  (new Date()).getTime() > date.getTime();
+    public static boolean isExpired(Context context) {
+        boolean expiring = true;
+        if  (new Date().getTime() < date.getTime().getTime()) {
+            expiring = false;
+        }
         if (expiring)
-            Toast.makeText(MainApp.instance().getApplicationContext(), "Application expired", Toast.LENGTH_LONG).show();
+            ToastUtils.showToastInUiThread(context, "Application expired");
 
         return expiring;
     }

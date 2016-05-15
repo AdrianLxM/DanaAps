@@ -12,11 +12,7 @@ public class LowSuspendStatus {
     public Date time = new Date(0,0,0);
     public Integer bg = 0;
     public Integer delta = 0;
-    public Double deltaAvg15m = 0d;
-    public Double deltaAvg30m = 0d;
-    public Double avg15m = 0d;
-    public Double avg30m = 0d;
-    //public String dataText = "";
+    public Double avgdelta = 0d;
     public String openApsText ="";
 
     public static LowSuspendStatus getInstance() {

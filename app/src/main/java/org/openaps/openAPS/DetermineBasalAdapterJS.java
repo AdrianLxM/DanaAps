@@ -18,6 +18,7 @@ import java.io.IOException;
 
 import info.nightscout.client.data.NSProfile;
 import info.nightscout.danaaps.MainApp;
+import info.nightscout.danaaps.calc.CarbCalc;
 
 public class DetermineBasalAdapterJS {
     private static Logger log = LoggerFactory.getLogger(DetermineBasalAdapterJS.class);
@@ -28,12 +29,14 @@ public class DetermineBasalAdapterJS {
     private V8Object mProfile;
     private V8Object mGlucoseStatus;
     private V8Object mIobData;
+    private V8Object mMealData;
     private V8Object mCurrentTemp;
 
     private final String PARAM_currentTemp = "currentTemp";
     private final String PARAM_iobData = "iobData";
     private final String PARAM_glucoseStatus = "glucose_status";
     private final String PARAM_profile = "profile";
+    private final String PARAM_meal_data = "meal_data";
 
     public DetermineBasalAdapterJS(ScriptReader scriptReader) throws IOException {
         mV8rt = V8.createV8Runtime();
@@ -43,6 +46,7 @@ public class DetermineBasalAdapterJS {
         initGlucoseStatus();
         initIobData();
         initCurrentTemp();
+        initMealData();
 
         initLogCallback();
 
@@ -59,6 +63,7 @@ public class DetermineBasalAdapterJS {
                         "JSON.stringify("+PARAM_glucoseStatus+")+ \", \" +\n" +
                         "JSON.stringify("+PARAM_currentTemp+")+ \", \" + \n" +
                         "JSON.stringify("+PARAM_iobData+")+ \", \" +\n" +
+                        "JSON.stringify("+PARAM_meal_data+")+ \", \" +\n" +
                         "JSON.stringify("+PARAM_profile+")+ \") \");");
         mV8rt.executeVoidScript(
                 "var rT = determine_basal(" +
@@ -67,6 +72,7 @@ public class DetermineBasalAdapterJS {
                         PARAM_iobData +", " +
                         PARAM_profile + ", " +
                         "undefined, "+
+                        PARAM_meal_data +", " +
                         "setTempBasal"+
                         ");");
 
@@ -190,6 +196,22 @@ public class DetermineBasalAdapterJS {
 
     }
 
+    public void initMealData() {
+        mMealData = new V8Object(mV8rt);
+
+        mMealData.add("carbs", 0);
+        mMealData.add("boluses", 0);
+
+        mV8rt.add(PARAM_meal_data, mMealData);
+    }
+
+    public void setMealData(CarbCalc.Meal mealdata) {
+
+        mMealData.add("carbs", mealdata.carbs);
+        mMealData.add("boluses", mealdata.boluses);
+        log.debug("Dev: setMealData: " + mMealData.toString());
+    }
+
     private int toMgdl (Double value, String units) {
         if (units.equals("mg/dL")) return value.intValue();
         else return (int) (value * 18);
@@ -240,6 +262,7 @@ public class DetermineBasalAdapterJS {
         mProfile.release();
         mCurrentTemp.release();
         mIobData.release();
+        mMealData.release();
         mGlucoseStatus.release();
         mV8rt.release();
     }

@@ -17,9 +17,9 @@ import org.slf4j.LoggerFactory;
 public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 	private static Logger log = LoggerFactory.getLogger(DatabaseHelper.class);
 
-	public static final String DATABASE_NAME = "DanaAppDb";
+	public static final String DATABASE_NAME = "DanaApsDb";
 
-	private static final int DATABASE_VERSION = 1;
+	private static final int DATABASE_VERSION = 2;
 
 	public DatabaseHelper(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);

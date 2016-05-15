@@ -37,7 +37,7 @@ public class PumpStatus {
     public double currentBasal = 0;
 
     @DatabaseField
-    public int tempBasalInProgress = 0;
+    public boolean tempBasalInProgress = false;
 
     @DatabaseField
     public int tempBasalRatio = 0;

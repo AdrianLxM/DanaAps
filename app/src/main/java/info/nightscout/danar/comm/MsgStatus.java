@@ -52,8 +52,8 @@ public class MsgStatus extends DanaRMessage {
         int extended_bolus_rate = DanaRMessages.byteArrayToInt(bytes, 12-6, 2);
 
         log.debug("status_bolus_extended:"+status_bolus_extended
-                + "extended_bolus_min:"+extended_bolus_min
-                + "extended_bolus_rate:"+extended_bolus_rate);
+                + " extended_bolus_min:"+extended_bolus_min
+                + " extended_bolus_rate:"+extended_bolus_rate);
 
         MainApp.bus().post(ev);
 

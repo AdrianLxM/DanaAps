@@ -18,15 +18,20 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import info.nightscout.danaaps.AppExpire;
 import info.nightscout.danaaps.DeviceStatus;
+import info.nightscout.danaaps.calc.CarbCalc;
 import info.nightscout.danaaps.calc.Iob;
+import info.nightscout.danaaps.tempBasal.Basal;
 import info.nightscout.danar.DanaConnection;
 import info.nightscout.danaaps.MainActivity;
 import info.nightscout.danaaps.MainApp;
 import info.nightscout.danaaps.ReceiverBG;
+import info.nightscout.danar.Result;
 import info.nightscout.danar.ServiceConnection;
+import info.nightscout.danar.db.Treatment;
 import info.nightscout.danar.event.LowSuspendStatus;
 import info.nightscout.danar.event.StatusEvent;
 import info.nightscout.utils.DateUtil;
@@ -51,58 +56,65 @@ public class ServiceBG extends android.app.IntentService {
         if (intent == null)
             return;
 
-        if (AppExpire.isExpired())
+        if (AppExpire.isExpired(MainApp.instance().getApplicationContext()))
             return;
 
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+
+        if (!preferences.getBoolean("masterSwitch", false)) {
+            log.debug("Master switch off. Quitting ...");
+            return;
+        }
+
         try {
+
             Bundle bundle = intent.getExtras();
             Date time =  new Date(bundle.getLong("time"));
             int glucoseValue = bundle.getInt("value");
             int delta = bundle.getInt("delta");
-            double deltaAvg30min = bundle.getDouble("deltaAvg30min");
-            double deltaAvg15min = bundle.getDouble("deltaAvg15min");
-            double avg30min = bundle.getDouble("avg30min");
-            double avg15min = bundle.getDouble("avg15min");
+            double avgdelta = bundle.getDouble("avgdelta");
 
-            String msgReceived = "time:" + dateFormat.format(time)
-                    + " bg " + glucoseValue
+            String msgReceived = "time: " + dateFormat.format(time)
+                    + " bg: " + glucoseValue
                     + " dlta: " + delta
-                    + " dltaAvg30m:" + numberFormat.format(deltaAvg30min)
-                    + " dltaAvg15m:" + numberFormat.format(deltaAvg15min)
-                    + " avg30m:" + numberFormat.format(avg30min)
-                    + " avg15m:" + numberFormat.format(avg15min);
-            log.debug("onHandleIntent "+msgReceived);
+                    + " avgdlta: " + numberFormat.format(avgdelta);
+            log.debug("onHandleIntent " + msgReceived);
 
+            // Store last BG for bolus wizard
+            if (MainActivity.lastBGTime == null || time.getTime() > MainActivity.lastBGTime.getTime()) {
+                MainActivity.lastBG = glucoseValue;
+                MainActivity.lastBGTime = time;
+            }
 
             LowSuspendStatus lowSuspendStatus = LowSuspendStatus.getInstance();
             lowSuspendStatus.bg = glucoseValue;
             lowSuspendStatus.time = time;
             lowSuspendStatus.delta = delta;
-            lowSuspendStatus.deltaAvg15m = deltaAvg15min;
-            lowSuspendStatus.deltaAvg30m = deltaAvg30min;
-            lowSuspendStatus.avg15m = avg15min;
-            lowSuspendStatus.avg30m = avg30min;
+            lowSuspendStatus.avgdelta = avgdelta;
 
             StatusEvent statusEvent = StatusEvent.getInstance();
             DanaConnection danaConnection = getDanaConnection();
 
-            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
             boolean openAPSenabled = preferences.getBoolean("OpenAPSenabled", false);
             DatermineBasalResult determineBasalResult = null;
 
-            double percent = 100 ;
+            double percent = 100;
+            double rate = statusEvent.currentBasal;
 
             // IOB calculation
-            Iob bolusIobOpenAPS = MainActivity.getIobOpenAPSFromTreatments(MainActivity.loadTreatments());
-            Iob bolusIob = MainActivity.getIobFromTreatments(MainActivity.loadTreatments());
+            List<Treatment> treatmentList = MainActivity.loadTreatments();
+            Iob bolusIobOpenAPS = MainActivity.getIobOpenAPSFromTreatments(treatmentList);
+            Iob bolusIob = MainActivity.getIobFromTreatments(treatmentList);
             Iob basalIob = MainActivity.getIobFromTempBasals(MainActivity.loadTempBasalsDB());
+            CarbCalc.Meal mealdata = MainActivity.getCarbsFromTreatments(treatmentList);
+
             //broadcastIob(bolusIobOpenAPS, bolusIob, basalIob);
             basalIob.plus(bolusIobOpenAPS);
             IobParam iobParam = new IobParam(basalIob.iobContrib, basalIob.activityContrib, bolusIobOpenAPS.iobContrib);
             //log.debug("IOB prepared: " + iobParam.json().toString());
 
-            LowSuspendResult lowSuspendResult = lowSuspend(glucoseValue, deltaAvg15min);
-            boolean lowSuspendEnabled = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getBoolean("LowSuspendEnabled", false);
+            LowSuspendResult lowSuspendResult = lowSuspend(glucoseValue, avgdelta);
+            boolean lowSuspendEnabled = preferences.getBoolean("LowSuspendEnabled", false);
 
             boolean performingLowSuspend = false;
             boolean performingOpenAps = false;
@@ -126,27 +138,24 @@ public class ServiceBG extends android.app.IntentService {
                 // Low suspend activated
                 deviceStatus.lowsuspend = lowSuspendResult.json();
                 percent = 0;
+                rate = 0;
                 performingLowSuspend = true;
             } else if (MainApp.getNSProfile() == null) {
                 log.debug("No profile received. Skipping OpenAPS");
                 lowSuspendStatus.openApsText = "No profile";
             } else {
-                determineBasalResult = openAps(glucoseValue, delta, deltaAvg15min, statusEvent, lowSuspendStatus, iobParam);
+                determineBasalResult = openAps(glucoseValue, delta, avgdelta, statusEvent, lowSuspendStatus, iobParam, mealdata);
                 if (openAPSenabled) {
-                    if (determineBasalResult.tempBasalRate == -1) {
-                        percent = statusEvent.tempBasalRatio == -1 ? 100 : statusEvent.tempBasalRatio;
-                    } else if (determineBasalResult.duration == 0) {
-                        percent = 100;
+                    if (determineBasalResult.rate == -1 || determineBasalResult.duration == 0) {
+                        // do nothing
                     } else {
-                        percent = determineBasalResult.tempBasalRate / statusEvent.currentBasal * 10;
-                        log.debug("openApsTempAbsolute:" + determineBasalResult.tempBasalRate + " percent:" + (percent*10));
+                        percent = determineBasalResult.rate / statusEvent.currentBasal * 10;
                         percent = Math.floor(percent) * 10;
-                        log.debug(" percent rounded :" + percent);
-                        if (percent > 200) {
-                            percent = 200;
-                        }
+                        rate = determineBasalResult.rate;
+                        log.debug("openApsTempAbsolute:" + determineBasalResult.rate + " percent:" + percent);
                         if (percent < 0) {
                             percent = 0;
+                            rate = 0;
                         }
                     }
                     determineBasalResult.json.put("timestamp", DateUtil.toISOString(new Date()));
@@ -160,7 +169,35 @@ public class ServiceBG extends android.app.IntentService {
                 danaConnection.connectIfNotConnected("ServiceBG 1hour");
             }
 
-            int tempPercent = (int) percent ;
+            Basal request = new Basal();
+            request.rate = rate;
+            request.ratePercent = (int) percent;
+            request.duration = determineBasalResult.duration;
+            log.debug("setExtendedTempBasal request" + request.log());
+            final Result result = danaConnection.setExtendedTempBasal(request);
+            log.debug("setExtendedTempBasal result" + result.log());
+
+            if (result.result) {
+                if (result.enacted) {
+                    deviceStatus.enacted = new JSONObject(determineBasalResult.json.toString());
+                    deviceStatus.enacted.put("rate", rate);
+                    if (performingOpenAps) {
+                        deviceStatus.enacted.put("recieved", true);
+                        deviceStatus.enacted.put("duration", result.duration);
+                        JSONObject requested = new JSONObject();
+                        if (determineBasalResult.duration != -1) requested.put("duration", determineBasalResult.json.getInt("duration"));
+                        if (determineBasalResult.rate != -1) requested.put("rate", determineBasalResult.json.getInt("rate"));
+                        requested.put("temp", determineBasalResult.json.getString("temp"));
+                        deviceStatus.enacted.put("requested", requested);
+                    }
+                } else {
+                    log.info("No Action: Temp basal as requested: " + percent + "% rate: " + rate);
+                }
+            } else {
+                log.debug("Setting of basal failed");
+            }
+/*
+            int tempPercent = (int) percent;
             Double tempAbs = statusEvent.currentBasal * tempPercent / 100;
 
             if(tempPercent != 100 && tempPercent != statusEvent.tempBasalRatio) {
@@ -220,6 +257,7 @@ public class ServiceBG extends android.app.IntentService {
             } else {
                 log.info("No Action: Temp basal as requested: " + tempPercent + " tempBasalRatio:" + statusEvent.tempBasalRatio);
             }
+*/
             deviceStatus.sendToNSClient();
             MainApp.bus().post(StatusEvent.getInstance());
 
@@ -232,7 +270,7 @@ public class ServiceBG extends android.app.IntentService {
 
     }
 
-    private DatermineBasalResult openAps(int glucoseValue, int delta, double deltaAvg15min, StatusEvent status, LowSuspendStatus lowSuspendStatus, IobParam iobParam) {
+    private DatermineBasalResult openAps(int glucoseValue, int delta, double deltaAvg15min, StatusEvent status, LowSuspendStatus lowSuspendStatus, IobParam iobParam, CarbCalc.Meal mealdata) {
         DetermineBasalAdapterJS determineBasalAdapterJS = null;
         try {
             determineBasalAdapterJS = new DetermineBasalAdapterJS(new ScriptReader(MainApp.instance().getBaseContext()));
@@ -246,9 +284,11 @@ public class ServiceBG extends android.app.IntentService {
 
         determineBasalAdapterJS.setIobData(iobParam);
 
+        determineBasalAdapterJS.setMealData(mealdata);
+
         determineBasalAdapterJS.setProfile_CurrentBasal(status.currentBasal);
         //disabled taken from prefs !!!!!!!!!!!!!!! determineBasalAdapterJS.setProfile_MaxBasal(status.currentBasal*2);
-        double tempBasalRatioAbsolute = status.tempBasalInProgress == 1 ? status.tempBasalRatio / 100.0d * status.currentBasal : 0;
+        double tempBasalRatioAbsolute = status.tempBasalInProgress ? status.tempBasalRatio / 100.0d * status.currentBasal : 0;
         int tempBasalRemainMin = status.tempBasalRemainMin;
         if(tempBasalRemainMin>30) {
             tempBasalRemainMin = 30;

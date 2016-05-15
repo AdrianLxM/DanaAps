@@ -37,7 +37,7 @@ public class MsgStatusTempBasal extends DanaRMessage {
         StatusEvent ev = StatusEvent.getInstance();
         ev.tempBasalRemainMin = tempBasalRemainMin;
         ev.tempBasalRatio = tempBasalPercent;
-        ev.tempBasalInProgress = tempBasalInProgress;
+        ev.tempBasalInProgress = tempBasalInProgress == 1;
         ev.tempBasalTotalSec = tempBasalTotalSec;
         ev.tempBasalAgoSecs = tempBasalAgo;
         ev.tempBasalStart = getDateFromTempBasalSecAgo(tempBasalAgo);

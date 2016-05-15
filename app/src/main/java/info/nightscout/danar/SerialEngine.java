@@ -1,16 +1,28 @@
 package info.nightscout.danar;
 
 import android.bluetooth.BluetoothSocket;
+import android.content.Context;
+import android.content.Intent;
+import android.content.pm.ResolveInfo;
+import android.os.Bundle;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
+import info.nightscout.client.broadcasts.Intents;
+import info.nightscout.danaaps.MainApp;
+import info.nightscout.danaaps.Settings;
 import info.nightscout.danar.comm.*;
+import info.nightscout.utils.DateUtil;
 
 public class SerialEngine extends Thread {
     private static Logger log = LoggerFactory.getLogger(SerialEngine.class);
@@ -40,6 +52,7 @@ public class SerialEngine extends Thread {
     }
 
     public final void run() {
+        Date openDate = new Date();
         while(mRun) {
             try {
 
@@ -108,6 +121,10 @@ public class SerialEngine extends Thread {
                                 log.debug("MSG " + danaRMessage.getMessageName() + " " + toHexString(responseMessageBytes));
                             }
 
+                            // Postpone disconnection
+                            DanaConnection dc = MainApp.instance().getDanaConnection();
+                            dc.scheduleDisconnection();
+
                             danaRMessage.handleMessage(responseMessageBytes);
                             danaRMessage.responses--;
 
@@ -141,6 +158,13 @@ public class SerialEngine extends Thread {
         try {mOutputStream.close();} catch (Exception e) {log.debug(e.getMessage());}
         try {mRfcommSocket.close(); } catch (Exception e) {log.debug(e.getMessage());}
         try {System.runFinalization();} catch (Exception e) {log.debug(e.getMessage());}
+
+        if (Settings.logBTConnectionsToNS) {
+            Date closeDate = new Date();
+            int durationInSeconds = (int)((closeDate.getTime() - openDate.getTime()) / 1000);
+            double durationInMinutes = Math.round(durationInSeconds / 60d * 100d) / 100d;
+            uploadConnection(openDate, durationInMinutes, durationInSeconds);
+        }
     }
 
     public static String toHexString(byte[] value)
@@ -163,10 +187,14 @@ public class SerialEngine extends Thread {
     }
 
     public void expectMessage(DanaRMessage message) {
+        DanaConnection dc = MainApp.instance().getDanaConnection();
         pendingMessages.put(message.getCommand(),message);
+        dc.scheduleDisconnection();
     }
 
     public synchronized void sendMessage(DanaRMessage message) {
+        DanaConnection dc = MainApp.instance().getDanaConnection();
+
         pendingMessages.put(message.getCommand(),message);
 
         byte[] messageBytes = message.getMessageBytes();
@@ -206,14 +234,38 @@ public class SerialEngine extends Thread {
         }
         try {
             Thread.sleep(200);
-        } catch (InterruptedException e) {
+        } catch (InterruptedException e) {}
 
-        }
+        dc.scheduleDisconnection();
     }
 
     void clearBuffer() {
         pendingMessages.clear();
     }
+
+    public static void uploadConnection(Date start, double durationInMinutes, int durationInSec) {
+        try {
+            Context context = MainApp.instance().getApplicationContext();
+            JSONObject data = new JSONObject();
+            data.put("eventType", "Note");
+            data.put("duration", durationInMinutes);
+            data.put("notes", "" + durationInSec);
+            data.put("created_at", DateUtil.toISOString(start));
+            data.put("enteredBy", "DanaAps");
+            Bundle bundle = new Bundle();
+            bundle.putString("action", "dbAdd");
+            bundle.putString("collection", "treatments");
+            bundle.putString("data", data.toString());
+            Intent intent = new Intent(Intents.ACTION_DATABASE);
+            intent.putExtras(bundle);
+            intent.addFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
+            context.sendBroadcast(intent);
+            List<ResolveInfo> q = context.getPackageManager().queryBroadcastReceivers(intent, 0);
+            if (q.size() < 1) {
+                log.error("DBADD No receivers");
+            } else log.debug("DBADD dbAdd " + q.size() + " receivers " + data.toString());
+        } catch (JSONException e) {
+        }
+    }
+
 }
-
-

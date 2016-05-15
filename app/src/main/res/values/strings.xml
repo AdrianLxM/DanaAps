@@ -42,4 +42,6 @@
     <string name="nav_backup">Backup</string>
     <string name="nav_resetdb">Reset databases</string>
     <string name="nav_exit">Exit</string>
+    <string name="safety_useextended_title">Use extended boluses</string>
+    <string name="safety_useextended_summary">Use extended boluses for high temps (\>200%)</string>
 </resources>

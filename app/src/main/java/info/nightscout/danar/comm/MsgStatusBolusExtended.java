@@ -1,9 +1,13 @@
 package info.nightscout.danar.comm;
 
+import android.support.annotation.NonNull;
+
 import info.nightscout.danaaps.MainApp;
 import info.nightscout.danar.event.StatusEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Date;
 
 public class MsgStatusBolusExtended extends DanaRMessage {
     private static Logger log = LoggerFactory.getLogger(MsgStatusBolusExtended.class);
@@ -33,6 +37,9 @@ public class MsgStatusBolusExtended extends DanaRMessage {
         ev.statusBolusExtendedPlannedAmount = ev.statusBolusExtendedInProgress ? statusBolusExtendedPlannedAmount : 0;
         ev.statusBolusExtendedDurationInMinutes = ev.statusBolusExtendedInProgress ? statusBolusExtendedDurationInMinutes : 0;
         ev.statusBolusExtendedDurationSoFarInMinutes = ev.statusBolusExtendedInProgress ? statusBolusExtendedDurationSoFarInMinutes : 0;
+        ev.statusBolusExtendedAbsoluteRate = ev.statusBolusExtendedPlannedAmount / ev.statusBolusExtendedDurationInMinutes * 60;
+        ev.statusBolusExtendedStart = getDateFromSecAgo(statusBolusExtendedDurationSoFarInSecs);
+        ev.statusBolusExtendedRemainingMin = ev.statusBolusExtendedDurationInMinutes - ev.statusBolusExtendedDurationSoFarInMinutes;
 
         MainApp.bus().post(ev);
 
@@ -43,4 +50,8 @@ public class MsgStatusBolusExtended extends DanaRMessage {
         );
     }
 
+    @NonNull
+    private Date getDateFromSecAgo(int tempBasalAgoSecs) {
+        return new Date((long) (Math.ceil(new Date().getTime() / 1000d) - tempBasalAgoSecs) * 1000);
+    }
 }
