@@ -7,9 +7,6 @@ import java.util.Date;
 
 import info.nightscout.utils.DateUtil;
 
-/**
- * Created by mike on 28.02.2016.
- */
 public class IobParam {
     public Double iob;
     public Double activity;

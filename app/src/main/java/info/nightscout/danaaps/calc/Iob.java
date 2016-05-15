@@ -1,8 +1,5 @@
 package info.nightscout.danaaps.calc;
 
-/**
- * Created by mike on 15.03.2016.
- */
 public class Iob {
     public double iobContrib = 0;
     public double activityContrib = 0;

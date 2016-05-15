@@ -11,9 +11,6 @@ import java.util.Date;
 import info.nightscout.danaaps.MainApp;
 import info.nightscout.danar.db.HistoryRecord;
 
-/**
- * Created by mike on 11.01.2016.
- */
 public class MsgHistoryAll extends DanaRMessage {
     private static Logger log = LoggerFactory.getLogger(MsgHistoryAll.class);
     public MsgHistoryAll() {

@@ -3,9 +3,6 @@ package info.nightscout.danar.comm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * Created by mike on 07.02.2016.
- */
 public class MsgSetBasalProfile extends DanaRMessage {
     private static Logger log = LoggerFactory.getLogger(MsgBolusStart.class);
     private String _id;

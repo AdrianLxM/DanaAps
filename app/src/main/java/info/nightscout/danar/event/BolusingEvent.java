@@ -16,9 +16,6 @@ import info.nightscout.client.broadcasts.Intents;
 import info.nightscout.danaaps.MainApp;
 import info.nightscout.danar.db.Treatment;
 
-/**
- * Created by mike on 05.02.2016.
- */
 public class BolusingEvent {
     private static Logger log = LoggerFactory.getLogger(BolusingEvent.class);
     public String sStatus = "";

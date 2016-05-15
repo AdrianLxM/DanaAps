@@ -15,7 +15,6 @@ import java.util.List;
 import info.nightscout.client.broadcasts.Intents;
 
 /**
- * Created by mike on 27.02.2016.
  *
  {
      "device": "openaps://indy-e3",

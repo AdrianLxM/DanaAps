@@ -4,7 +4,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * Created by mike on 10.02.2016.
  *
  * {"mgdl":105,"mills":1455136282375,"device":"xDrip-BluetoothWixel","direction":"Flat","filtered":98272,"unfiltered":98272,"noise":1,"rssi":100}
  */

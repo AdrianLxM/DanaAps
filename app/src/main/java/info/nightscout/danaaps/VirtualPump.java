@@ -5,9 +5,6 @@ import java.util.Date;
 import info.nightscout.client.data.NSProfile;
 import info.nightscout.danar.db.TempBasal;
 
-/**
- * Created by mike on 23.02.2016.
- */
 public class VirtualPump {
 
     public static VirtualPump virtualPump = null;

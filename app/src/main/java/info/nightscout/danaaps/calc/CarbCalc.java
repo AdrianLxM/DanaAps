@@ -11,9 +11,6 @@ import info.nightscout.client.data.NSProfile;
 import info.nightscout.danaaps.MainApp;
 import info.nightscout.danar.db.Treatment;
 
-/**
- * Created by mike on 08.03.2016.
- */
 public class CarbCalc {
     private static Logger log = LoggerFactory.getLogger(IobCalc.class);
 

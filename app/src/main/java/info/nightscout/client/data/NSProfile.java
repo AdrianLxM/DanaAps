@@ -8,9 +8,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
-/**
- * Created by mike on 25.01.2016.
- */
 public class NSProfile {
     private JSONObject json = null;
     private String activeProfile = null;

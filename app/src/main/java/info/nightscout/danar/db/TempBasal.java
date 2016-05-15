@@ -6,6 +6,7 @@ import com.j256.ormlite.table.DatabaseTable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import info.nightscout.danaaps.Settings;
 import info.nightscout.danaaps.calc.Iob;
 import info.nightscout.danaaps.calc.IobCalc;
 
@@ -91,9 +92,11 @@ public class TempBasal {
             iob.plus(iobCalc.invoke());
         }
 
-        log.debug("TempIOB start: " + this.timeStart + " end: " + this.timeEnd  + " Percent: " + this.percent + " Duration: " + this.duration + " CalcDurat: " + (int)((currentTimeEnd.getTime()-this.timeStart.getTime())/1000/60)
-                + "min minAgo: " + (int)(msAgo / 1000 / 60) + " IOB: " + iob.iobContrib + " Activity: " + iob.activityContrib + " Impact: " + (-0.01d*(baseRatio- tempRatio)*((currentTimeEnd.getTime()-this.timeStart.getTime())/1000/60)/60)
-        );
+        if (Settings.logTempIOBCalculation) {
+            log.debug("TempIOB start: " + this.timeStart + " end: " + this.timeEnd + " Percent: " + this.percent + " Duration: " + this.duration + " CalcDurat: " + (int) ((currentTimeEnd.getTime() - this.timeStart.getTime()) / 1000 / 60)
+                    + "min minAgo: " + (int) (msAgo / 1000 / 60) + " IOB: " + iob.iobContrib + " Activity: " + iob.activityContrib + " Impact: " + (-0.01d * (baseRatio - tempRatio) * ((currentTimeEnd.getTime() - this.timeStart.getTime()) / 1000 / 60) / 60)
+            );
+        }
 
         return iob;
     }

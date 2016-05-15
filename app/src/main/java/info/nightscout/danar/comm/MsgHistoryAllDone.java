@@ -1,8 +1,5 @@
 package info.nightscout.danar.comm;
 
-/**
- * Created by mike on 11.01.2016.
- */
 public class MsgHistoryAllDone extends DanaRMessage {
     public boolean done = false;
 

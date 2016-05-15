@@ -5,9 +5,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.widget.Toast;
 
-/**
- * Created by mike on 13.05.2016.
- */
 public class ToastUtils {
 
     public static void showToastInUiThread(final Context ctx,

@@ -6,9 +6,6 @@ import android.preference.PreferenceFragment;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 
-/**
- * Created by mike on 02.01.2016.
- */
 public class Preferences extends PreferenceActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {

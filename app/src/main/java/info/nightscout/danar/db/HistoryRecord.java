@@ -5,9 +5,6 @@ import com.j256.ormlite.table.DatabaseTable;
 
 import java.util.Date;
 
-/**
- * Created by mike on 11.01.2016.
- */
 @DatabaseTable(tableName = "History")
 public class HistoryRecord {
 

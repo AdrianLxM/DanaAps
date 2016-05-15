@@ -1,8 +1,5 @@
 package info.nightscout.utils;
 
-/**
- * Created by mike on 30.12.2015.
- */
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;

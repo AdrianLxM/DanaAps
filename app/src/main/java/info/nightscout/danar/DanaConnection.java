@@ -249,7 +249,7 @@ public class DanaConnection {
         if (scheduledDisconnection != null)
             scheduledDisconnection.cancel(false);
         Runnable task = new DisconnectRunnable();
-        scheduledDisconnection = worker.schedule(task, 5, TimeUnit.SECONDS);
+        scheduledDisconnection = worker.schedule(task, 3, TimeUnit.SECONDS);
     }
 
     public void disconnect() {

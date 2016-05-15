@@ -3,9 +3,6 @@ package info.nightscout.client.data;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-/**
- * Created by mike on 13.02.2016.
- */
 public class NSCal {
     public long date;
     public double slope;

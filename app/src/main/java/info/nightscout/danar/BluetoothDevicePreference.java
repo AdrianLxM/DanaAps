@@ -1,8 +1,5 @@
 package info.nightscout.danar;
 
-/**
- * Created by mike on 23.01.2016.
- */
 import android.bluetooth.*;
 import android.content.Context;
 import android.preference.ListPreference;

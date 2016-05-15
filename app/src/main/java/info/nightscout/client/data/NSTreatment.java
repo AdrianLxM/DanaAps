@@ -5,9 +5,6 @@ import org.json.JSONObject;
 
 import java.util.Date;
 
-/**
- * Created by mike on 10.02.2016.
- */
 public class NSTreatment {
     private JSONObject data;
     private String action = null; // "update", "remove" or null (add)

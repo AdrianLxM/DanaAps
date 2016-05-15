@@ -6,7 +6,6 @@ import org.json.JSONObject;
 import java.util.Date;
 
 /**
- * Created by mike on 25.01.2016.
  {
  status: 'ok'
  , name: env.name

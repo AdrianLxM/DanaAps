@@ -1,8 +1,5 @@
 package info.nightscout.client.broadcasts;
 
-/**
- * Created by mike on 20.02.2016.
- */
 public interface Intents {
     // send
     String ACTION_NEW_TREATMENT = "info.nightscout.client.NEW_TREATMENT";

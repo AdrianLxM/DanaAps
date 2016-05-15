@@ -22,9 +22,6 @@ import info.nightscout.danaaps.calc.Iob;
 import info.nightscout.danaaps.calc.IobCalc;
 import info.nightscout.utils.DateUtil;
 
-/**
- * Created by mike on 28.02.2016.
- */
 @DatabaseTable(tableName = "Treatments")
 public class Treatment {
     private static Logger log = LoggerFactory.getLogger(Treatment.class);

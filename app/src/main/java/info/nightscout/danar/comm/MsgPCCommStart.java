@@ -1,8 +1,5 @@
 package info.nightscout.danar.comm;
 
-/**
- * Created by mike on 11.01.2016.
- */
 public class MsgPCCommStart extends DanaRMessage {
     public MsgPCCommStart() {
         super("CMD_CONNECT");

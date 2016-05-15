@@ -3,9 +3,6 @@ package org.openaps.openAPS;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-/**
- * Created by mike on 27.02.2016.
- */
 public class LowSuspendResult {
     public boolean lowProjected;
     public boolean low;
