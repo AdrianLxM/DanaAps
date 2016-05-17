@@ -180,10 +180,12 @@ public class ServiceBG extends android.app.IntentService {
             if (result.result) {
                 if (result.enacted) {
                     deviceStatus.enacted = new JSONObject(determineBasalResult.json.toString());
-                    deviceStatus.enacted.put("rate", rate);
+                    if (rate != -1)
+                        deviceStatus.enacted.put("rate", rate);
                     if (performingOpenAps) {
                         deviceStatus.enacted.put("recieved", true);
-                        deviceStatus.enacted.put("duration", result.duration);
+                        if (rate != -1)
+                            deviceStatus.enacted.put("duration", result.duration);
                         JSONObject requested = new JSONObject();
                         if (determineBasalResult.duration != -1) requested.put("duration", determineBasalResult.json.getInt("duration"));
                         if (determineBasalResult.rate != -1) requested.put("rate", determineBasalResult.json.getInt("rate"));
