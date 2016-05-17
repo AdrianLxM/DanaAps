@@ -11,6 +11,7 @@ import android.view.*;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import java.text.DecimalFormat;
@@ -54,6 +55,15 @@ public class WizardDialogFragment extends DialogFragment implements OnClickListe
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
         @Override
         public void onTextChanged(CharSequence s, int start,int before, int count) {
+            calculateInsulin();
+        }
+    };
+
+    final CompoundButton.OnCheckedChangeListener onCheckedChangeListener = new CompoundButton.OnCheckedChangeListener()
+    {
+        @Override
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
+        {
             calculateInsulin();
         }
     };
@@ -104,6 +114,9 @@ public class WizardDialogFragment extends DialogFragment implements OnClickListe
         total = (TextView)view.findViewById(R.id.wizardTotal);
         totalInsulin = (TextView)view.findViewById(R.id.wizardTotalInsulin);
 
+        bgCheckbox.setOnCheckedChangeListener(onCheckedChangeListener);
+        iobCheckbox.setOnCheckedChangeListener(onCheckedChangeListener);
+
         initDialog();
         return view;
     }
@@ -116,10 +129,6 @@ public class WizardDialogFragment extends DialogFragment implements OnClickListe
                     dismiss();
                     communicator.treatmentDialogDeliver(calculatedTotalInsulin, calculatedCarbs);
                 }
-                break;
-            case R.id.wizardBGCheckbox:
-            case R.id.wizardIOBCheckbox:
-                calculateInsulin();
                 break;
         }
 
