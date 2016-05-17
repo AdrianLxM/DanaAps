@@ -90,7 +90,7 @@ public class TempBasalArrayAdapter extends ArrayAdapter<TempBasal> {
             )
         );
 
-        Double sens = MainApp.getNSProfile() != null ? MainApp.getNSProfile().getIsf(MainApp.getNSProfile().minutesFromMidnight()) : 0;
+        Double sens = MainApp.getNSProfile() != null ? MainApp.getNSProfile().getIsf(MainApp.getNSProfile().secondsFromMidnight()) : 0;
         Iob iob = tempBasal.calcIob();
         holder.tempBasal_iob.setText(formatNumber2place.format(iob.iobContrib)
             + " " + formatNumber2place.format(iob.activityContrib*sens));

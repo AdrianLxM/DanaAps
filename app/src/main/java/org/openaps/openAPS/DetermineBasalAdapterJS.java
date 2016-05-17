@@ -234,13 +234,13 @@ public class DetermineBasalAdapterJS {
         mProfile.add("carbs_hr", nsProfile.getCarbAbsorbtionRate());
         mProfile.add("dia", nsProfile.getDia());
         mProfile.add("type", "current");
-        setProfile_CurrentBasal(nsProfile.getBasal(nsProfile.minutesFromMidnight()));
+        setProfile_CurrentBasal(nsProfile.getBasal(nsProfile.secondsFromMidnight()));
         mProfile.add("max_daily_basal", nsProfile.getMaxDailyBasal());
         mProfile.add("max_basal", Double.parseDouble(SP.getString("max_basal", "1")));
         mProfile.add("max_bg", toMgdl(Double.parseDouble(SP.getString("max_bg", maxBgDefault)), units));
         mProfile.add("min_bg", toMgdl(Double.parseDouble(SP.getString("min_bg", minBgDefault)), units));
-        mProfile.add("carbratio", nsProfile.getIc(nsProfile.minutesFromMidnight()));
-        mProfile.add("sens", toMgdl(nsProfile.getIsf(nsProfile.minutesFromMidnight()).doubleValue(), units) );
+        mProfile.add("carbratio", nsProfile.getIc(nsProfile.secondsFromMidnight()));
+        mProfile.add("sens", toMgdl(nsProfile.getIsf(nsProfile.secondsFromMidnight()).doubleValue(), units) );
         mV8rt.add(PARAM_profile, mProfile);
     }
 

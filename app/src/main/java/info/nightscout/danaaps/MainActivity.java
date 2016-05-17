@@ -372,7 +372,7 @@ public class MainActivity extends Activity
         List<TempBasal> tempBasalList = loadTempBasalsDB();
 
         Iob iobNum = getIobFromTempBasals(tempBasalList);
-        Double sens = MainApp.getNSProfile() != null ? MainApp.getNSProfile().getIsf(MainApp.getNSProfile().minutesFromMidnight()) : 0;
+        Double sens = MainApp.getNSProfile() != null ? MainApp.getNSProfile().getIsf(MainApp.getNSProfile().secondsFromMidnight()) : 0;
         basalIob.setText(formatNumber1place.format(iobNum.iobContrib));
         basalIobActivity.setText(formatNumber1place.format(iobNum.activityContrib * sens));
     }

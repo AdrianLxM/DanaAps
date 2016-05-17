@@ -302,7 +302,7 @@ public class DanaConnection {
                 VirtualPump vp = VirtualPump.getInstance();
                 statusEvent.remainUnits = vp.remainUnits;
                 statusEvent.remainBattery = vp.remainBattery;
-                statusEvent.currentBasal = vp.nsProfile == null ? 0.2 : vp.nsProfile.getBasal(vp.nsProfile.minutesFromMidnight());
+                statusEvent.currentBasal = vp.nsProfile == null ? 0.2 : vp.nsProfile.getBasal(vp.nsProfile.secondsFromMidnight());
                 statusEvent.last_bolus_amount = vp.last_bolus_amount;
                 statusEvent.last_bolus_time = vp.last_bolus_time;
                 statusEvent.time = new Date();

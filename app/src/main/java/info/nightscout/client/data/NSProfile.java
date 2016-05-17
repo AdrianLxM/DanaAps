@@ -197,7 +197,7 @@ public class NSProfile {
         return max;
     }
 
-    public static int minutesFromMidnight () {
+    public static int secondsFromMidnight() {
         Calendar c = Calendar.getInstance();
         long now = c.getTimeInMillis();
         c.set(Calendar.HOUR_OF_DAY, 0);
@@ -205,6 +205,6 @@ public class NSProfile {
         c.set(Calendar.SECOND, 0);
         c.set(Calendar.MILLISECOND, 0);
         long passed = now - c.getTimeInMillis();
-        return (int) (passed / 1000 / 60);
+        return (int) (passed / 1000);
     }
 }

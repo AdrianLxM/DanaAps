@@ -714,7 +714,8 @@
                 android:layout_weight="0.30"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                />
+                android:background="#7d6d6b"
+                android:layout_marginBottom="5dp" />
         </LinearLayout>
 
 

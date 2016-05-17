@@ -11,7 +11,6 @@ import android.view.*;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.text.DecimalFormat;
@@ -141,9 +140,9 @@ public class WizardDialogFragment extends DialogFragment implements OnClickListe
 
 
         if (MainActivity.lastBGTime != null && new Date().getTime() - MainActivity.lastBGTime.getTime() < 11 * 60 * 1000) {
-            Double sens = MainApp.getNSProfile().getIsf(MainApp.getNSProfile().minutesFromMidnight());
-            Double targetBGLow  = MainApp.getNSProfile().getTargetLow(MainApp.getNSProfile().minutesFromMidnight());
-            Double targetBGHigh  = MainApp.getNSProfile().getTargetHigh(MainApp.getNSProfile().minutesFromMidnight());
+            Double sens = MainApp.getNSProfile().getIsf(MainApp.getNSProfile().secondsFromMidnight());
+            Double targetBGLow  = MainApp.getNSProfile().getTargetLow(MainApp.getNSProfile().secondsFromMidnight());
+            Double targetBGHigh  = MainApp.getNSProfile().getTargetHigh(MainApp.getNSProfile().secondsFromMidnight());
             Double bgDiff;
             if (MainActivity.lastBG <= targetBGLow) {
                 bgDiff = fromMgdl(MainActivity.lastBG, units) - targetBGLow;
@@ -204,9 +203,9 @@ public class WizardDialogFragment extends DialogFragment implements OnClickListe
 
 
         // Insulin from BG
-        Double sens = profile.getIsf(MainApp.getNSProfile().minutesFromMidnight());
-        Double targetBGLow  = profile.getTargetLow(MainApp.getNSProfile().minutesFromMidnight());
-        Double targetBGHigh  = profile.getTargetHigh(MainApp.getNSProfile().minutesFromMidnight());
+        Double sens = profile.getIsf(MainApp.getNSProfile().secondsFromMidnight());
+        Double targetBGLow  = profile.getTargetLow(MainApp.getNSProfile().secondsFromMidnight());
+        Double targetBGHigh  = profile.getTargetHigh(MainApp.getNSProfile().secondsFromMidnight());
         Double bgDiff;
         if (c_bg <= targetBGLow) {
             bgDiff = c_bg - targetBGLow;
@@ -218,7 +217,7 @@ public class WizardDialogFragment extends DialogFragment implements OnClickListe
         bgInsulin.setText(numberFormat.format(insulinFromBG) + "U");
 
         // Insuling from carbs
-        Double ic = profile.getIc(MainApp.getNSProfile().minutesFromMidnight());
+        Double ic = profile.getIc(MainApp.getNSProfile().secondsFromMidnight());
         Double insulinFromCarbs = c_carbs / ic;
         carbs.setText(intFormat.format(c_carbs) + "g IC: " + intFormat.format(ic));
         carbsInsulin.setText(numberFormat.format(insulinFromCarbs) + "U");
